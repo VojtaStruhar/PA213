@@ -210,9 +210,14 @@ vec3 Rand3() {
 	return vec3(Rand(), Rand(), Rand());
 }
 
-vec3 LocalToWorldCoords(vec3 local) {
+/// Slide #56
+vec3 LocalToWorldCoords(vec3 local, vec3 n) {
+	vec3 U = abs(n.z) < 0.999 ? vec3(0, 0, 1) : vec3(0, 1, 0);
+	vec3 T = cross(U, n);
+	vec3 B = cross(n, T);
 
-	return local;
+	vec3 result = T * local.x + B * local.y + n * local.z;
+	return normalize(result);
 }
 
 // ----------------------------------------------------------------------------
@@ -229,19 +234,21 @@ BSDFSample SampleUniformLambert(Hit hit, Ray ray) {
 	//          Do not forget to normalize all the vectors.
 	vec3 dir = vec3(1.0);
 
-	vec2 rand = Rand2();
-	float ang1 = (rand.x + 1.0) * PI; // [-1..1) -> [0..2*PI)
-	float u = rand.y; // [-1..1), cos and acos(2v-1) cancel each other out, so we arrive at [-1..1)
-	float u2 = u * u;
-	float sqrt1MinusU2 = sqrt(1.0 - u2);
-	float x = sqrt1MinusU2 * cos(ang1);
-	float y = sqrt1MinusU2 * sin(ang1);
-	float z = u;
-	vec3 v = vec3(x, y, z);
-	dir = v * sign(dot(v, hit.normal));
+	vec2 xi = Rand2();
+	float theta = 2 * PI * xi.x;
+	float r = sqrt(xi.y);
+
+	// Slide #54
+	float x = sqrt(1 - xi.x * xi.x) * cos(2 * PI * xi.y);
+	float y = sqrt(1 - xi.x * xi.x) * sin(2 * PI * xi.y);
+	float z = xi.x;
+
+	dir = vec3(x, y, z);
+	dir = LocalToWorldCoords(dir, hit.normal);
+
 
 	// TODO: 1b: Set a correct PDF value for uniform samples (see slide #54).
-	float pdf = 1.0;
+	float pdf = 1.0 / (2.0 * PI);
 
 	// DO NOT MODIFY
     return BSDFSample(dir, pdf, true, false);
