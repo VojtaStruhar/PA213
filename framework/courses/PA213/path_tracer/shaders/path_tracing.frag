@@ -207,14 +207,14 @@ float Rand()
 // ----------------------------------------------------------------------------
 
 BSDFSample SampleUniformLambert(Hit hit, Ray ray){
-	// TASK 1a: Implement an algorithm to sample a unit hemisphere using uniform distribution (see slide #54).
+	// TODO: 1a: Implement an algorithm to sample a unit hemisphere using uniform distribution (see slide #54).
 	//          You will also need to tranform the sample from the local to the world coordinates (see slide #56).
 	//   Hints: The surface normal is stored in 'hit.normal'. 
 	//         	Use Rand() to generate uniformly distributed values between [0,1].
 	//          Do not forget to normalize all the vectors.
 	vec3 dir = vec3(1.0);
 	
-	// TASK 1b: Set a correct PDF value for uniform samples (see slide #54).
+	// TODO: 1b: Set a correct PDF value for uniform samples (see slide #54).
 	float pdf = 1.0;
 
 	// DO NOT MODIFY
@@ -223,7 +223,7 @@ BSDFSample SampleUniformLambert(Hit hit, Ray ray){
 
 vec3 EvaluateLambert(Hit hit, BSDFSample Wi, vec3 Wr) {
 
-	// TASK 2: Return a correct value for Lambertian BRDF function (for now use 1.0 for albedo).
+	// TODO: 2: Return a correct value for Lambertian BRDF function (for now use 1.0 for albedo).
 	//         See slide #67.
 	return vec3(1.0);
 }
@@ -233,13 +233,13 @@ vec3 EvaluateLambert(Hit hit, BSDFSample Wi, vec3 Wr) {
 // ----------------------------------------------------------------------------
 
 BSDFSample SampleCosineWeightedLambert(Hit hit, Ray ray){
-	// TASK 3a: Implement an algorithm to sample a unit hemisphere using cosine-weighted distribution (see slide #63).
+	// TODO: 3a: Implement an algorithm to sample a unit hemisphere using cosine-weighted distribution (see slide #63).
 	//          You will also need to tranform the sample from the local to the world coordinates (see slide #56).
 	//   Hints: The surface normal is stored in 'hit.normal'. 
 	//         	Use Rand() to generate uniformly distributed values between [0,1]. 
 	vec3 dir = vec3(1.0);
 	
-	// TASK 3b: Set a correct PDF value for cosine-weighted samples (see slide #63).
+	// TODO: 3b: Set a correct PDF value for cosine-weighted samples (see slide #63).
 	float pdf = 1.0;
 
 	// DO NOT MODIFY
@@ -247,7 +247,7 @@ BSDFSample SampleCosineWeightedLambert(Hit hit, Ray ray){
 }
 
 vec3 EvaluateLambertWithAlbedo(Hit hit, BSDFSample Wi, vec3 Wr) {
-    // TASK 4: Return a correct value for Lambertian BRDF function (using actuall albedo).
+    // TODO: 4: Return a correct value for Lambertian BRDF function (using actuall albedo).
 	//  Hints: The surface albedo is stored in 'hit.material.albedo'. 
 	//         See slide #67.
 	return hit.material.albedo.rgb;
@@ -258,7 +258,7 @@ vec3 EvaluateLambertWithAlbedo(Hit hit, BSDFSample Wi, vec3 Wr) {
 // ----------------------------------------------------------------------------
 
 BSDFSample SampleSmithGGX(Hit hit, Ray ray) {
-	// TASK 5a: Implement an algorithm for sampling a unit hemisphere according to SmithGGX 
+	// TODO: 5a: Implement an algorithm for sampling a unit hemisphere according to SmithGGX
 	//          distribution (see slides #89 and #90).
 	//          You will also need to tranform the sample from the local to the world coordinates (see slide #56).
 	//   Hints: The 'alpha' term is stored in 'hit.material.roughness'.
@@ -270,7 +270,7 @@ BSDFSample SampleSmithGGX(Hit hit, Ray ray) {
 	//          Avoid dividing by 0.
 	vec3 dir = vec3(1.0);
 
-	// TASK 5b: Set a correct PDF value for samples based on SmithGGX distribution (see slides #89 and #90).
+	// TODO: 5b: Set a correct PDF value for samples based on SmithGGX distribution (see slides #89 and #90).
 	float pdf = 1.0;
 
 	// DO NOT MODIFY
@@ -278,14 +278,14 @@ BSDFSample SampleSmithGGX(Hit hit, Ray ray) {
 }
 
 float FresnelSchlick(float R0, vec3 Wi, vec3 N){
-	// TASK 6: Implement Schlick�s approximation of the Fresnel equations (see slide #79).
+	// TODO: 6: Implement Schlick�s approximation of the Fresnel equations (see slide #79).
 	//  Hints: Do not forget to clamp the dot product value to range [0,1]; 
 	//         Usefull functions: pow, clamp
 	return 0.0;
 }
 
 float SmithGGXMaskingShadowing(Hit hit, vec3 Wi, vec3 Wr){
-	// TASK 7: Implement SmithGGX masking and shadowing term (see slide #83)
+	// TODO: 7: Implement SmithGGX masking and shadowing term (see slide #83)
 	//  Hints: The 'alpha' term is stored in 'hit.material.roughness'
 	//         The surface normal is stored in 'hit.normal'
 	//         The angles theta_i and theta_r are angles between the vectors Wi and Wr and normal respectively.
@@ -294,7 +294,7 @@ float SmithGGXMaskingShadowing(Hit hit, vec3 Wi, vec3 Wr){
 }
 
 vec3 EvaluateSmithGGX(Hit hit, BSDFSample Wi, vec3 Wr){
-	// TASK 8: Implement Microfacet BRDF (see slide #81)
+	// TODO: 8: Implement Microfacet BRDF (see slide #81)
 	//  Hints: The 'alpha' term is stored in 'hit.material.roughness'.
 	//         The surface normal is stored in 'hit.normal'.
 	//         To get the Wi vector use 'Wi.direction'.
@@ -316,11 +316,11 @@ BSDFSample SampleCombinedDiffuseSpecular(Hit hit, Ray ray){
 	//        
 	vec3 dir = vec3(1.0);
 
-	// TASK 9b: The variable diffuse_sample should be set to true for diffuse samples, 
+	// TODO: 9b: The variable diffuse_sample should be set to true for diffuse samples,
 	//          and to false for specular sample.
 	bool diffuse_sample = true;
 
-	// TASK 9c: Set a correct PDF value weigted based on the surface roughness (see slide #95).
+	// TODO: 9c: Set a correct PDF value weigted based on the surface roughness (see slide #95).
 	float pdf = 1.0;
 	
 	// DO NOT MODIFY
@@ -328,7 +328,7 @@ BSDFSample SampleCombinedDiffuseSpecular(Hit hit, Ray ray){
 }
 
 vec3 EvaluateCombinedDiffuseSpecular(Hit hit, BSDFSample Wi, vec3 Wr){
-	// TASK 10: Return Lambert BRDF (with albedo) for diffuse samples and Microfacet BRDF for specular samples.
+	// TODO: 10: Return Lambert BRDF (with albedo) for diffuse samples and Microfacet BRDF for specular samples.
 	//   Hints: You can use the Wi.diffuse variable (you have set in TASK 9b, by setting diffuse_sample).
 	return vec3(1.0);
 }
@@ -348,6 +348,7 @@ BSDFSample GetNextSample(Hit hit, Ray ray){
 		case 3:
 			return SampleCombinedDiffuseSpecular(hit, ray);
 	}
+	return BSDFSample(vec3(0), 0, false, false);
 }
 
 vec3 ComputeBRDF (Hit hit, BSDFSample Wi, vec3 Wr){
@@ -361,6 +362,7 @@ vec3 ComputeBRDF (Hit hit, BSDFSample Wi, vec3 Wr){
 		case 3:
 			return EvaluateCombinedDiffuseSpecular(hit, Wi, Wr);
 	}
+	return vec3(0);
 }
 
 // Traces the ray trough the scene and accumulates the radiance.
