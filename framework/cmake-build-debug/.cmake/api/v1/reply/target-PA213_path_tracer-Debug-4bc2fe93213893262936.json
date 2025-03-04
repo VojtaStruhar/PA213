@@ -1,0 +1,552 @@
+{
+	"artifacts" : 
+	[
+		{
+			"path" : "courses/PA213/path_tracer/PA213_path_tracer.exe"
+		},
+		{
+			"path" : "courses/PA213/path_tracer/PA213_path_tracer.pdb"
+		}
+	],
+	"backtrace" : 3,
+	"backtraceGraph" : 
+	{
+		"commands" : 
+		[
+			"_add_executable",
+			"add_executable",
+			"visitlab_generate_lecture",
+			"target_link_libraries",
+			"visitlab_resolve_dependencies",
+			"set_target_properties",
+			"include",
+			"_find_package",
+			"find_package"
+		],
+		"files" : 
+		[
+			"ext/vcpkg/scripts/buildsystems/vcpkg.cmake",
+			"cmake/courses.cmake",
+			"courses/PA213/path_tracer/CMakeLists.txt",
+			"cmake/utils.cmake",
+			"framework/glm/CMakeLists.txt",
+			"framework/gui/CMakeLists.txt",
+			"cmake-build-debug/vcpkg_installed/x64-windows/share/imgui/imgui-targets.cmake",
+			"cmake-build-debug/vcpkg_installed/x64-windows/share/imgui/imgui-config.cmake",
+			"framework/core/CMakeLists.txt",
+			"framework/geometry/CMakeLists.txt"
+		],
+		"nodes" : 
+		[
+			{
+				"file" : 2
+			},
+			{
+				"command" : 2,
+				"file" : 2,
+				"line" : 11,
+				"parent" : 0
+			},
+			{
+				"command" : 1,
+				"file" : 1,
+				"line" : 104,
+				"parent" : 1
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 598,
+				"parent" : 2
+			},
+			{
+				"command" : 4,
+				"file" : 1,
+				"line" : 120,
+				"parent" : 1
+			},
+			{
+				"command" : 3,
+				"file" : 3,
+				"line" : 65,
+				"parent" : 4
+			},
+			{
+				"file" : 4
+			},
+			{
+				"command" : 3,
+				"file" : 4,
+				"line" : 21,
+				"parent" : 6
+			},
+			{
+				"file" : 5
+			},
+			{
+				"command" : 3,
+				"file" : 5,
+				"line" : 19,
+				"parent" : 8
+			},
+			{
+				"command" : 8,
+				"file" : 5,
+				"line" : 14,
+				"parent" : 8
+			},
+			{
+				"command" : 7,
+				"file" : 0,
+				"line" : 859,
+				"parent" : 10
+			},
+			{
+				"file" : 7,
+				"parent" : 11
+			},
+			{
+				"command" : 6,
+				"file" : 7,
+				"line" : 65,
+				"parent" : 12
+			},
+			{
+				"file" : 6,
+				"parent" : 13
+			},
+			{
+				"command" : 5,
+				"file" : 6,
+				"line" : 60,
+				"parent" : 14
+			},
+			{
+				"file" : 8
+			},
+			{
+				"command" : 3,
+				"file" : 8,
+				"line" : 25,
+				"parent" : 16
+			},
+			{
+				"file" : 9
+			},
+			{
+				"command" : 3,
+				"file" : 9,
+				"line" : 17,
+				"parent" : 18
+			}
+		]
+	},
+	"compileGroups" : 
+	[
+		{
+			"compileCommandFragments" : 
+			[
+				{
+					"fragment" : "/DWIN32 /D_WINDOWS /W3 /GR /EHsc /MDd /Zi /Ob0 /Od /RTC1 -std:c++20"
+				},
+				{
+					"backtrace" : 5,
+					"fragment" : "/Zc:__cplusplus"
+				},
+				{
+					"backtrace" : 5,
+					"fragment" : "/utf-8"
+				},
+				{
+					"backtrace" : 5,
+					"fragment" : "/Zc:preprocessor"
+				}
+			],
+			"defines" : 
+			[
+				{
+					"backtrace" : 5,
+					"define" : "GLFW_DLL"
+				},
+				{
+					"backtrace" : 5,
+					"define" : "GTEST_LINKED_AS_SHARED_LIBRARY=1"
+				}
+			],
+			"includes" : 
+			[
+				{
+					"backtrace" : 5,
+					"path" : "C:/temp/PA213/framework/framework/pa213/include"
+				},
+				{
+					"backtrace" : 5,
+					"path" : "C:/temp/PA213/framework/framework/core/include"
+				},
+				{
+					"backtrace" : 5,
+					"path" : "C:/temp/PA213/framework/framework/core/include/opengl"
+				},
+				{
+					"backtrace" : 5,
+					"path" : "C:/temp/PA213/framework/framework/core/include/scene"
+				},
+				{
+					"backtrace" : 5,
+					"path" : "C:/temp/PA213/framework/framework/core/include/geometry"
+				},
+				{
+					"backtrace" : 5,
+					"path" : "C:/temp/PA213/framework/framework/core/geometries"
+				},
+				{
+					"backtrace" : 5,
+					"path" : "C:/temp/PA213/framework/framework/opengl/include"
+				},
+				{
+					"backtrace" : 5,
+					"path" : "C:/temp/PA213/framework/framework/opengl/include/ubo"
+				},
+				{
+					"backtrace" : 5,
+					"path" : "C:/temp/PA213/framework/framework/gui/include"
+				},
+				{
+					"backtrace" : 5,
+					"path" : "C:/temp/PA213/framework/framework/glm/include"
+				},
+				{
+					"backtrace" : 5,
+					"path" : "C:/temp/PA213/framework/framework/geometry/include"
+				},
+				{
+					"backtrace" : 5,
+					"path" : "C:/temp/PA213/framework/framework/geometry/geometries"
+				},
+				{
+					"backtrace" : 5,
+					"path" : "C:/temp/PA213/framework/framework/opengl_4_5/include"
+				},
+				{
+					"backtrace" : 5,
+					"path" : "C:/temp/PA213/framework/framework/opengl_4_5/include/scene"
+				},
+				{
+					"backtrace" : 5,
+					"path" : "C:/temp/PA213/framework/framework/geometry_4_5/include"
+				},
+				{
+					"backtrace" : 5,
+					"isSystem" : true,
+					"path" : "C:/temp/PA213/framework/cmake-build-debug/vcpkg_installed/x64-windows/include"
+				}
+			],
+			"language" : "CXX",
+			"languageStandard" : 
+			{
+				"backtraces" : 
+				[
+					5,
+					5
+				],
+				"standard" : "20"
+			},
+			"sourceIndexes" : 
+			[
+				1,
+				2,
+				6,
+				7,
+				8,
+				9,
+				10,
+				11,
+				12,
+				13,
+				14
+			]
+		}
+	],
+	"dependencies" : 
+	[
+		{
+			"backtrace" : 5,
+			"id" : "PA213_MODULE::@20a1b1bb5e667dada3ae"
+		},
+		{
+			"backtrace" : 5,
+			"id" : "CORE_MODULE::@03a3214d4d97b2505c38"
+		},
+		{
+			"backtrace" : 5,
+			"id" : "GLM_MODULE::@6f3e9f5a1d77e24efa0b"
+		},
+		{
+			"backtrace" : 5,
+			"id" : "GEOMETRY_4_5_MODULE::@47e3f37950e9f47e11ce"
+		},
+		{
+			"backtrace" : 5,
+			"id" : "OPENGL_MODULE::@cb017ab25b0b1ffd049d"
+		},
+		{
+			"backtrace" : 5,
+			"id" : "OPENGL_4_5_MODULE::@3435bf377e05191c7d4f"
+		},
+		{
+			"backtrace" : 5,
+			"id" : "GEOMETRY_MODULE::@0427da057047a9e64904"
+		},
+		{
+			"backtrace" : 5,
+			"id" : "GUI_MODULE::@0fbfe7d627f7bc62651e"
+		}
+	],
+	"id" : "PA213_path_tracer::@bfc28ce0b79b6f526b9d",
+	"link" : 
+	{
+		"commandFragments" : 
+		[
+			{
+				"fragment" : "/DWIN32 /D_WINDOWS /W3 /GR /EHsc /MDd /Zi /Ob0 /Od /RTC1",
+				"role" : "flags"
+			},
+			{
+				"fragment" : "/machine:x64 /debug /INCREMENTAL /subsystem:console",
+				"role" : "flags"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "framework\\pa213\\PA213_MODULE.lib",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "framework\\core\\CORE_MODULE.lib",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "framework\\opengl\\OPENGL_MODULE.lib",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "framework\\opengl_4_5\\OPENGL_4_5_MODULE.lib",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "framework\\geometry\\GEOMETRY_MODULE.lib",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "framework\\glm\\GLM_MODULE.lib",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "framework\\gui\\GUI_MODULE.lib",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "framework\\geometry_4_5\\GEOMETRY_4_5_MODULE.lib",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "framework\\opengl\\OPENGL_MODULE.lib",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "framework\\gui\\GUI_MODULE.lib",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "framework\\glm\\GLM_MODULE.lib",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 7,
+				"fragment" : "vcpkg_installed\\x64-windows\\debug\\lib\\glm.lib",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 9,
+				"fragment" : "vcpkg_installed\\x64-windows\\debug\\lib\\imguid.lib",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 15,
+				"fragment" : "vcpkg_installed\\x64-windows\\debug\\lib\\glfw3dll.lib",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "framework\\geometry\\GEOMETRY_MODULE.lib",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "framework\\core\\CORE_MODULE.lib",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 17,
+				"fragment" : "vcpkg_installed\\x64-windows\\debug\\lib\\glad.lib",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 17,
+				"fragment" : "vcpkg_installed\\x64-windows\\debug\\lib\\glfw3dll.lib",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 17,
+				"fragment" : "vcpkg_installed\\x64-windows\\debug\\lib\\gtest.lib",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 19,
+				"fragment" : "vcpkg_installed\\x64-windows\\debug\\lib\\tinyobjloader.lib",
+				"role" : "libraries"
+			},
+			{
+				"fragment" : "kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib",
+				"role" : "libraries"
+			}
+		],
+		"language" : "CXX"
+	},
+	"name" : "PA213_path_tracer",
+	"nameOnDisk" : "PA213_path_tracer.exe",
+	"paths" : 
+	{
+		"build" : "courses/PA213/path_tracer",
+		"source" : "courses/PA213/path_tracer"
+	},
+	"sourceGroups" : 
+	[
+		{
+			"name" : "Header Files",
+			"sourceIndexes" : 
+			[
+				0,
+				3,
+				4,
+				5
+			]
+		},
+		{
+			"name" : "Source Files",
+			"sourceIndexes" : 
+			[
+				1,
+				2,
+				6,
+				7,
+				8,
+				9,
+				10,
+				11,
+				12,
+				13,
+				14
+			]
+		}
+	],
+	"sources" : 
+	[
+		{
+			"backtrace" : 3,
+			"path" : "courses/PA213/path_tracer/application.hpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 3,
+			"compileGroupIndex" : 0,
+			"path" : "courses/PA213/path_tracer/application.cpp",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 3,
+			"compileGroupIndex" : 0,
+			"path" : "courses/PA213/path_tracer/main.cpp",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 5,
+			"path" : "framework/opengl_4_5/include/opengl_4_5_application.hpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 5,
+			"path" : "framework/opengl_4_5/include/scene_object_deprecated.hpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 5,
+			"path" : "framework/opengl_4_5/include/ubo_impl.hpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 5,
+			"compileGroupIndex" : 0,
+			"path" : "framework/opengl_4_5/src/ubo/light_ubo.cpp",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 5,
+			"compileGroupIndex" : 0,
+			"path" : "framework/opengl_4_5/src/ubo/ubo.cpp",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 5,
+			"compileGroupIndex" : 0,
+			"path" : "framework/opengl_4_5/src/fbo_utils.cpp",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 5,
+			"compileGroupIndex" : 0,
+			"path" : "framework/opengl_4_5/src/opengl_4_5_application.cpp",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 5,
+			"compileGroupIndex" : 0,
+			"path" : "framework/opengl_4_5/src/program.cpp",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 5,
+			"compileGroupIndex" : 0,
+			"path" : "framework/opengl_4_5/src/texture.cpp",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 5,
+			"compileGroupIndex" : 0,
+			"path" : "framework/opengl_4_5/src/texture_utils.cpp",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 5,
+			"compileGroupIndex" : 0,
+			"path" : "framework/geometry_4_5/src/cube.cpp",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 5,
+			"compileGroupIndex" : 0,
+			"path" : "framework/geometry_4_5/src/geometry.cpp",
+			"sourceGroupIndex" : 1
+		}
+	],
+	"type" : "EXECUTABLE"
+}

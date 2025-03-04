@@ -1,0 +1,19 @@
+{
+    "name": "main",
+    "version-string": "1.0.0",
+    "builtin-baseline": "3508985146f1b1d248c67ead13f8f54be5b4f5da",
+    "dependencies": [
+        "glfw3",
+        "glad",
+        "glm",
+        {
+            "name": "imgui",
+            "features": [ "opengl3-binding", "glfw-binding" ]
+        },
+        "toml11",
+        "tinyobjloader",
+        "gtest",
+        "lodepng",
+        "stb"
+    ]
+}

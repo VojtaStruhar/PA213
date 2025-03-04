@@ -1,0 +1,15 @@
+Downloading https://github.com/microsoft/vcpkg-tool/releases/download/2025-02-11/vcpkg.exe -> C:\temp\PA213\framework\ext\vcpkg\vcpkg.exe... done.
+Validating signature... done.
+
+vcpkg package management program version 2025-02-11-bec4296bf5289dc9ce83b4f5095943e44162f9c2
+
+See LICENSE.txt for license information.
+Telemetry
+---------
+vcpkg collects usage data in order to help us improve your experience.
+The data collected by Microsoft is anonymous.
+You can opt-out of telemetry by re-running the bootstrap-vcpkg script with -disableMetrics,
+passing --disable-metrics to vcpkg on the command line,
+or by setting the VCPKG_DISABLE_METRICS environment variable.
+
+Read more about vcpkg telemetry at docs/about/privacy.md

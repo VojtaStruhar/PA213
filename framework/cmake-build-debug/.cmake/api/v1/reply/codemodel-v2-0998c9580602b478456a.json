@@ -1,0 +1,292 @@
+{
+	"configurations" : 
+	[
+		{
+			"directories" : 
+			[
+				{
+					"build" : ".",
+					"childIndexes" : 
+					[
+						1,
+						3,
+						4,
+						5,
+						6,
+						7,
+						8,
+						9,
+						10
+					],
+					"jsonFile" : "directory-.-Debug-d0094a50bb2071803777.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.14"
+					},
+					"projectIndex" : 0,
+					"source" : "."
+				},
+				{
+					"build" : "courses/PA213",
+					"childIndexes" : 
+					[
+						2
+					],
+					"jsonFile" : "directory-courses.PA213-Debug-38e383cd423d713cc002.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.14"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 0,
+					"source" : "courses/PA213"
+				},
+				{
+					"build" : "courses/PA213/path_tracer",
+					"jsonFile" : "directory-courses.PA213.path_tracer-Debug-1f26a174c9f9f07e7385.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.14"
+					},
+					"parentIndex" : 1,
+					"projectIndex" : 0,
+					"source" : "courses/PA213/path_tracer",
+					"targetIndexes" : 
+					[
+						8
+					]
+				},
+				{
+					"build" : "framework/pa213",
+					"jsonFile" : "directory-framework.pa213-Debug-e0266fc49529e69dfb89.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.14"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 0,
+					"source" : "framework/pa213",
+					"targetIndexes" : 
+					[
+						7
+					]
+				},
+				{
+					"build" : "framework/core",
+					"jsonFile" : "directory-framework.core-Debug-7a65a644866d7ba7072c.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.14"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 0,
+					"source" : "framework/core",
+					"targetIndexes" : 
+					[
+						0
+					]
+				},
+				{
+					"build" : "framework/opengl",
+					"jsonFile" : "directory-framework.opengl-Debug-c0e3f03c6420a77fd59c.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.14"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 0,
+					"source" : "framework/opengl",
+					"targetIndexes" : 
+					[
+						6
+					]
+				},
+				{
+					"build" : "framework/opengl_4_5",
+					"jsonFile" : "directory-framework.opengl_4_5-Debug-b629889ddd2d3a546844.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.14"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 0,
+					"source" : "framework/opengl_4_5",
+					"targetIndexes" : 
+					[
+						5
+					]
+				},
+				{
+					"build" : "framework/geometry",
+					"jsonFile" : "directory-framework.geometry-Debug-326f51b9897d1c6c9aef.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.14"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 0,
+					"source" : "framework/geometry",
+					"targetIndexes" : 
+					[
+						2
+					]
+				},
+				{
+					"build" : "framework/glm",
+					"jsonFile" : "directory-framework.glm-Debug-99d2a32a2b43eb7ef56f.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.14"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 0,
+					"source" : "framework/glm",
+					"targetIndexes" : 
+					[
+						3
+					]
+				},
+				{
+					"build" : "framework/gui",
+					"jsonFile" : "directory-framework.gui-Debug-4ebdb48b3bc344c2c16f.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.14"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 0,
+					"source" : "framework/gui",
+					"targetIndexes" : 
+					[
+						4
+					]
+				},
+				{
+					"build" : "framework/geometry_4_5",
+					"jsonFile" : "directory-framework.geometry_4_5-Debug-aaa4ec741c40250b4b05.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.14"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 0,
+					"source" : "framework/geometry_4_5",
+					"targetIndexes" : 
+					[
+						1
+					]
+				}
+			],
+			"name" : "Debug",
+			"projects" : 
+			[
+				{
+					"directoryIndexes" : 
+					[
+						0,
+						1,
+						2,
+						3,
+						4,
+						5,
+						6,
+						7,
+						8,
+						9,
+						10
+					],
+					"name" : "ComputerGraphicsFramework",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2,
+						3,
+						4,
+						5,
+						6,
+						7,
+						8
+					]
+				}
+			],
+			"targets" : 
+			[
+				{
+					"directoryIndex" : 4,
+					"id" : "CORE_MODULE::@03a3214d4d97b2505c38",
+					"jsonFile" : "target-CORE_MODULE-Debug-b810e3e385d1432b01f0.json",
+					"name" : "CORE_MODULE",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 10,
+					"id" : "GEOMETRY_4_5_MODULE::@47e3f37950e9f47e11ce",
+					"jsonFile" : "target-GEOMETRY_4_5_MODULE-Debug-5b169cfbe99600a1e708.json",
+					"name" : "GEOMETRY_4_5_MODULE",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 7,
+					"id" : "GEOMETRY_MODULE::@0427da057047a9e64904",
+					"jsonFile" : "target-GEOMETRY_MODULE-Debug-3023b8a6575463c4472d.json",
+					"name" : "GEOMETRY_MODULE",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 8,
+					"id" : "GLM_MODULE::@6f3e9f5a1d77e24efa0b",
+					"jsonFile" : "target-GLM_MODULE-Debug-703ab4f087ad98fdcd79.json",
+					"name" : "GLM_MODULE",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 9,
+					"id" : "GUI_MODULE::@0fbfe7d627f7bc62651e",
+					"jsonFile" : "target-GUI_MODULE-Debug-5b0dbacc5979f2fca6b7.json",
+					"name" : "GUI_MODULE",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 6,
+					"id" : "OPENGL_4_5_MODULE::@3435bf377e05191c7d4f",
+					"jsonFile" : "target-OPENGL_4_5_MODULE-Debug-dbd73751435858ac49dc.json",
+					"name" : "OPENGL_4_5_MODULE",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 5,
+					"id" : "OPENGL_MODULE::@cb017ab25b0b1ffd049d",
+					"jsonFile" : "target-OPENGL_MODULE-Debug-bff1e719dae3e6c2c571.json",
+					"name" : "OPENGL_MODULE",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 3,
+					"id" : "PA213_MODULE::@20a1b1bb5e667dada3ae",
+					"jsonFile" : "target-PA213_MODULE-Debug-11dfe153a154d8466bd2.json",
+					"name" : "PA213_MODULE",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 2,
+					"id" : "PA213_path_tracer::@bfc28ce0b79b6f526b9d",
+					"jsonFile" : "target-PA213_path_tracer-Debug-4bc2fe93213893262936.json",
+					"name" : "PA213_path_tracer",
+					"projectIndex" : 0
+				}
+			]
+		}
+	],
+	"kind" : "codemodel",
+	"paths" : 
+	{
+		"build" : "C:/temp/PA213/framework/cmake-build-debug",
+		"source" : "C:/temp/PA213/framework"
+	},
+	"version" : 
+	{
+		"major" : 2,
+		"minor" : 5
+	}
+}
