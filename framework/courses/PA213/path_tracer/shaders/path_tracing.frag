@@ -98,7 +98,7 @@ struct Hit {
     float t;				  // The distance between the ray origin and the intersection points along the ray. 
 	vec3 intersection;        // The intersection point.
     vec3 normal;              // The surface normal at the interesection point.
-	vec3 ffnormal;			  // The front face normal (usefull for transmission).
+	vec3 ffnormal;			  // The front face normal (useful for transmission).
 	bool emissive;			  // The flag indicating whether the object is emissive.
 	bool glass;				  // The flag indicating whether the object is glass.
 	PathTracerMaterialData material; // The material of the object at the intersection point.
@@ -202,18 +202,44 @@ float Rand()
 	return fract(sin(dot(vec2(random_seed*0.1) * gl_FragCoord.xy, vec2(12.9898, 78.233))) * 43758.5453);
 }
 
+vec2 Rand2() {
+	return vec2(Rand(), Rand());
+}
+
+vec3 Rand3() {
+	return vec3(Rand(), Rand(), Rand());
+}
+
+vec3 LocalToWorldCoords(vec3 local) {
+
+	return local;
+}
+
 // ----------------------------------------------------------------------------
 // Assignment: Uniform Lambertian BRDF
 // ----------------------------------------------------------------------------
 
-BSDFSample SampleUniformLambert(Hit hit, Ray ray){
+BSDFSample SampleUniformLambert(Hit hit, Ray ray) {
+	// TIP: Implement a function for the world-to-local transition. It will be used several times.
+
 	// TODO: 1a: Implement an algorithm to sample a unit hemisphere using uniform distribution (see slide #54).
 	//          You will also need to tranform the sample from the local to the world coordinates (see slide #56).
 	//   Hints: The surface normal is stored in 'hit.normal'. 
 	//         	Use Rand() to generate uniformly distributed values between [0,1].
 	//          Do not forget to normalize all the vectors.
 	vec3 dir = vec3(1.0);
-	
+
+	vec2 rand = Rand2();
+	float ang1 = (rand.x + 1.0) * PI; // [-1..1) -> [0..2*PI)
+	float u = rand.y; // [-1..1), cos and acos(2v-1) cancel each other out, so we arrive at [-1..1)
+	float u2 = u * u;
+	float sqrt1MinusU2 = sqrt(1.0 - u2);
+	float x = sqrt1MinusU2 * cos(ang1);
+	float y = sqrt1MinusU2 * sin(ang1);
+	float z = u;
+	vec3 v = vec3(x, y, z);
+	dir = v * sign(dot(v, hit.normal));
+
 	// TODO: 1b: Set a correct PDF value for uniform samples (see slide #54).
 	float pdf = 1.0;
 
@@ -258,6 +284,8 @@ vec3 EvaluateLambertWithAlbedo(Hit hit, BSDFSample Wi, vec3 Wr) {
 // ----------------------------------------------------------------------------
 
 BSDFSample SampleSmithGGX(Hit hit, Ray ray) {
+	// WARNING: Probably the most complex task (?)
+
 	// TODO: 5a: Implement an algorithm for sampling a unit hemisphere according to SmithGGX
 	//          distribution (see slides #89 and #90).
 	//          You will also need to tranform the sample from the local to the world coordinates (see slide #56).
@@ -280,7 +308,7 @@ BSDFSample SampleSmithGGX(Hit hit, Ray ray) {
 float FresnelSchlick(float R0, vec3 Wi, vec3 N){
 	// TODO: 6: Implement Schlick�s approximation of the Fresnel equations (see slide #79).
 	//  Hints: Do not forget to clamp the dot product value to range [0,1]; 
-	//         Usefull functions: pow, clamp
+	//         useful functions: pow, clamp
 	return 0.0;
 }
 
@@ -309,7 +337,7 @@ vec3 EvaluateSmithGGX(Hit hit, BSDFSample Wi, vec3 Wr){
 // ----------------------------------------------------------------------------
 
 BSDFSample SampleCombinedDiffuseSpecular(Hit hit, Ray ray){
-	// TAKS 9a: Use roughness stored in 'hit.material.roughness' and Rand() function to 
+	// TODO 9a: Use roughness stored in 'hit.material.roughness' and Rand() function to
 	//          randomly perform either sampling based on the specular (SampleSmithGGX) 
 	//          or diffuse (SampleCosineWeightedLambert) properties (see slide #95). 
 	//   Hints: You can call the methods you have implemented earlier directly.
