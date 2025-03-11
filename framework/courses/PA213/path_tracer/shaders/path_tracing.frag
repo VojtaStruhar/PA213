@@ -258,7 +258,7 @@ vec3 EvaluateLambert(Hit hit, BSDFSample Wi, vec3 Wr) {
 
 	// TODO: 2: Return a correct value for Lambertian BRDF function (for now use 1.0 for albedo).
 	//         See slide #67.
-	return vec3(1.0);
+	return vec3(1.0 / PI);
 }
 
 // ----------------------------------------------------------------------------
@@ -271,9 +271,21 @@ BSDFSample SampleCosineWeightedLambert(Hit hit, Ray ray){
 	//   Hints: The surface normal is stored in 'hit.normal'. 
 	//         	Use Rand() to generate uniformly distributed values between [0,1]. 
 	vec3 dir = vec3(1.0);
-	
+
+	vec2 xi = Rand2();
+	float theta = 2 * PI * xi.x;
+	float r = sqrt(xi.y);
+
+	// Slide #54
+	float x = sqrt(xi.x) * cos(2 * PI * xi.y);
+	float y = sqrt(xi.x) * sin(2 * PI * xi.y);
+	float z = sqrt(1 - xi.x);
+
+	dir = vec3(x, y, z);
+	dir = LocalToWorldCoords(dir, hit.normal);
+
 	// TODO: 3b: Set a correct PDF value for cosine-weighted samples (see slide #63).
-	float pdf = 1.0;
+	float pdf = 1.0 / (2 * PI);
 
 	// DO NOT MODIFY
     return BSDFSample(dir, pdf, true, false);
@@ -283,7 +295,7 @@ vec3 EvaluateLambertWithAlbedo(Hit hit, BSDFSample Wi, vec3 Wr) {
     // TODO: 4: Return a correct value for Lambertian BRDF function (using actuall albedo).
 	//  Hints: The surface albedo is stored in 'hit.material.albedo'. 
 	//         See slide #67.
-	return hit.material.albedo.rgb;
+	return hit.material.albedo.rgb / PI;
 }
 
 // ----------------------------------------------------------------------------
