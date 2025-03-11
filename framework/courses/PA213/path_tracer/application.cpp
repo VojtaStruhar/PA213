@@ -252,7 +252,7 @@ void Application::render_ui() {
     if (ImGui::Combo("BRDF", &current_brdf, BRDF_LABELS, IM_ARRAYSIZE(BRDF_LABELS))) {
         clear();
     }
-    if (ImGui::SliderInt("Bounces", &bounces, 1, 100)) {
+    if (ImGui::SliderInt("Bounces", &bounces, 1, 15)) {
         clear();
     }
     ImGui::End();

@@ -212,6 +212,7 @@ vec3 Rand3() {
 
 /// Slide #56
 vec3 LocalToWorldCoords(vec3 local, vec3 n) {
+	local = normalize(local);
 	vec3 U = abs(n.z) < 0.999 ? vec3(0, 0, 1) : vec3(0, 1, 0);
 	vec3 T = cross(U, n);
 	vec3 B = cross(n, T);
@@ -276,7 +277,7 @@ BSDFSample SampleCosineWeightedLambert(Hit hit, Ray ray){
 	float theta = 2 * PI * xi.x;
 	float r = sqrt(xi.y);
 
-	// Slide #54
+	// Slide #63
 	float x = sqrt(xi.x) * cos(2 * PI * xi.y);
 	float y = sqrt(xi.x) * sin(2 * PI * xi.y);
 	float z = sqrt(1 - xi.x);
@@ -285,7 +286,7 @@ BSDFSample SampleCosineWeightedLambert(Hit hit, Ray ray){
 	dir = LocalToWorldCoords(dir, hit.normal);
 
 	// TODO: 3b: Set a correct PDF value for cosine-weighted samples (see slide #63).
-	float pdf = 1.0 / (2 * PI);
+	float pdf = cos(theta) / PI;
 
 	// DO NOT MODIFY
     return BSDFSample(dir, pdf, true, false);
@@ -317,8 +318,24 @@ BSDFSample SampleSmithGGX(Hit hit, Ray ray) {
 	//          Avoid dividing by 0.
 	vec3 dir = vec3(1.0);
 
+	vec2 xi = Rand2();
+	float a = hit.material.roughness;
+	float theta = acos(sqrt(1 - xi.x / xi.x * (a * a - 1) + 1));
+	float r = sqrt(xi.y);
+
+	// Slide #63 - same as Cosine-Weighted Sampling
+	float x = sqrt(xi.x) * cos(2 * PI * xi.y);
+	float y = sqrt(xi.x) * sin(2 * PI * xi.y);
+	float z = sqrt(1 - xi.x);
+
+	dir = vec3(x, y, z);
+	dir = LocalToWorldCoords(dir, hit.normal);
+
+
 	// TODO: 5b: Set a correct PDF value for samples based on SmithGGX distribution (see slides #89 and #90).
-	float pdf = 1.0;
+	float a2 = (a * a);
+	float term1 = (a2 - 1) * cos(theta) * cos(theta) + 1;
+	float pdf = a2 / (PI * term1 * term1);
 
 	// DO NOT MODIFY
     return BSDFSample(dir, pdf, true, false);
