@@ -320,7 +320,7 @@ BSDFSample SampleSmithGGX(Hit hit, Ray ray) {
 
 	vec2 xi = Rand2();
 	float a = hit.material.roughness;
-	float theta = acos(sqrt(1 - xi.x / xi.x * (a * a - 1) + 1));
+	float theta = acos(sqrt((1 - xi.x) / (xi.x * (a * a - 1) + 1)));
 	float r = sqrt(xi.y);
 
 	// Slide #63 - same as Cosine-Weighted Sampling
@@ -331,21 +331,21 @@ BSDFSample SampleSmithGGX(Hit hit, Ray ray) {
 	dir = vec3(x, y, z);
 	dir = LocalToWorldCoords(dir, hit.normal);
 
-
 	// TODO: 5b: Set a correct PDF value for samples based on SmithGGX distribution (see slides #89 and #90).
 	float a2 = (a * a);
 	float term1 = (a2 - 1) * cos(theta) * cos(theta) + 1;
-	float pdf = a2 / (PI * term1 * term1);
+	float pdf = (a2 * cos(theta)) / (PI * term1 * term1);
 
 	// DO NOT MODIFY
     return BSDFSample(dir, pdf, true, false);
 }
 
 float FresnelSchlick(float R0, vec3 Wi, vec3 N){
-	// TODO: 6: Implement Schlick�s approximation of the Fresnel equations (see slide #79).
+	// TODO: 6: Implement Schlick approximation of the Fresnel equations (see slide #79).
 	//  Hints: Do not forget to clamp the dot product value to range [0,1]; 
 	//         useful functions: pow, clamp
-	return 0.0;
+	float result = R0 + (1 - R0) * pow(1 - clamp(dot(Wi, N), 0, 1), 5.0);
+	return result;
 }
 
 float SmithGGXMaskingShadowing(Hit hit, vec3 Wi, vec3 Wr){
