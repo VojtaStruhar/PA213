@@ -30,7 +30,7 @@ void main()
 	vec3 accumulated = texture(accumulated_color, in_data.tex_coord).rgb / iterations;
 	// We apply gamma correction to the color.
 	if(gamma_correction){
-		accumulated = pow(accumulated, vec3(1.0/5.2));
+		accumulated = pow(accumulated, vec3(1.0/2.2));
 	}
 	final_color = vec4(accumulated,1);
 }
