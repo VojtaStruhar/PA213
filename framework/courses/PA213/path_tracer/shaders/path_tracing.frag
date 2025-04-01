@@ -348,13 +348,30 @@ float FresnelSchlick(float R0, vec3 Wi, vec3 N){
 	return result;
 }
 
+/// AKA Geometric Attenuation for SmithGGX
 float SmithGGXMaskingShadowing(Hit hit, vec3 Wi, vec3 Wr){
 	// TODO: 7: Implement SmithGGX masking and shadowing term (see slide #83)
 	//  Hints: The 'alpha' term is stored in 'hit.material.roughness'
 	//         The surface normal is stored in 'hit.normal'
 	//         The angles theta_i and theta_r are angles between the vectors Wi and Wr and normal respectively.
 	//         Avoid dividing by 0.
-	return 0.0;
+	float theta_i = dot(Wi, hit.normal);
+	float theta_r = dot(Wr, hit.normal);
+	float alpha = hit.material.roughness;
+
+	float top = 2 * cos(theta_i) * cos(theta_r);
+	float bottom_1 = cos(theta_r) * sqrt(alpha * alpha  + (1 - alpha * alpha) * cos(theta_i) * cos(theta_i));
+	float bottom_2 = cos(theta_i) * sqrt(alpha * alpha  + (1 - alpha * alpha) * cos(theta_r) * cos(theta_r));
+
+
+	return top / (bottom_1 + bottom_2);
+}
+
+float nonzero(float value) {
+	if (abs(value) < 0.001) {
+		return value < 0 ? -0.001 : 0.001;
+	}
+	return value;
 }
 
 vec3 EvaluateSmithGGX(Hit hit, BSDFSample Wi, vec3 Wr){
@@ -365,7 +382,25 @@ vec3 EvaluateSmithGGX(Hit hit, BSDFSample Wi, vec3 Wr){
 	//         When computing FresnelSchlick use R0 = 1.0;
 	//         You want to multiply the final value by the albedo which is store in 'hit.material.albedo'.
 	//         Avoid dividing by 0.
-	return hit.material.albedo.rgb;
+
+	float alpha = hit.material.roughness;
+	vec3 N = hit.normal;
+	vec3 Wh = (Wr + Wi.direction) / abs(Wr + Wi.direction);
+
+	float theta_i = dot(Wi.direction, hit.normal);
+	float theta_r = dot(Wr, hit.normal);
+	float theta_h = dot(Wh, hit.normal);
+
+	float F = FresnelSchlick(1.0, Wi.direction, Wh);
+	float G = SmithGGXMaskingShadowing(hit, Wi.direction, Wr);
+
+	float DNF_top = alpha * alpha;
+	float DNF_bottom = ((DNF_top - 1) * cos(theta_h) * cos(theta_h) + 1);
+	float D = DNF_top / nonzero(PI * DNF_bottom * DNF_bottom);
+
+	float result_bottom = 4 * cos(theta_i) * cos(theta_r);
+
+	return hit.material.albedo.rgb * (F * G * D / nonzero(result_bottom));
 }
 
 // ----------------------------------------------------------------------------
