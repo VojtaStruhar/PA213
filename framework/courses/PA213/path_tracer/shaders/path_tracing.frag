@@ -384,19 +384,19 @@ vec3 EvaluateSmithGGX(Hit hit, BSDFSample Wi, vec3 Wr){
 	//         Avoid dividing by 0.
 
 	float alpha = hit.material.roughness;
-	vec3 N = hit.normal;
 	vec3 Wh = (Wr + Wi.direction) / abs(Wr + Wi.direction);
 
-	float theta_i = dot(Wi.direction, hit.normal);
-	float theta_r = dot(Wr, hit.normal);
-	float theta_h = dot(Wh, hit.normal);
+	vec3 N = hit.normal;
+	float theta_i = dot(Wi.direction, N);
+	float theta_r = dot(Wr, N);
+	float theta_h = dot(Wh, N);
 
 	float F = FresnelSchlick(1.0, Wi.direction, Wh);
 	float G = SmithGGXMaskingShadowing(hit, Wi.direction, Wr);
 
-	float DNF_top = alpha * alpha;
-	float DNF_bottom = ((DNF_top - 1) * cos(theta_h) * cos(theta_h) + 1);
-	float D = DNF_top / nonzero(PI * DNF_bottom * DNF_bottom);
+	float NDF_top = alpha * alpha;
+	float NDF_bottom = ((NDF_top - 1) * cos(theta_h) * cos(theta_h) + 1);
+	float D = NDF_top / nonzero(PI * NDF_bottom * NDF_bottom);
 
 	float result_bottom = 4 * cos(theta_i) * cos(theta_r);
 
