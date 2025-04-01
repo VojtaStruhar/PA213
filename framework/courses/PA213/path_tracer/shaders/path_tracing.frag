@@ -368,13 +368,13 @@ float SmithGGXMaskingShadowing(Hit hit, vec3 Wi, vec3 Wr){
 }
 
 float nonzero(float value) {
-	if (abs(value) < 0.001) {
-		return value < 0 ? -0.001 : 0.001;
-	}
+//	if (abs(value) < 0.001) {
+//		return value < 0 ? -0.001 : 0.001;
+//	}
 	return value;
 }
 
-vec3 EvaluateSmithGGX(Hit hit, BSDFSample Wi, vec3 Wr){
+vec3 EvaluateSmithGGX_BRDF(Hit hit, BSDFSample Wi, vec3 Wr){
 	// TODO: 8: Implement Microfacet BRDF (see slide #81)
 	//  Hints: The 'alpha' term is stored in 'hit.material.roughness'.
 	//         The surface normal is stored in 'hit.normal'.
@@ -457,7 +457,7 @@ vec3 ComputeBRDF (Hit hit, BSDFSample Wi, vec3 Wr){
 		case 1:	
 			return EvaluateLambertWithAlbedo(hit, Wi, Wr);
 		case 2: 
-			return EvaluateSmithGGX(hit, Wi, Wr);
+			return EvaluateSmithGGX_BRDF(hit, Wi, Wr);
 		case 3:
 			return EvaluateCombinedDiffuseSpecular(hit, Wi, Wr);
 	}
