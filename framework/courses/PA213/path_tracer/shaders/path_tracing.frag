@@ -394,7 +394,9 @@ vec3 EvaluateSmithGGX_BRDF(Hit hit, BSDFSample Wi, vec3 Wr){
 	float F = FresnelSchlick(1.0, Wi.direction, Wh);
 	float G = SmithGGXMaskingShadowing(hit, Wi.direction, Wr);
 
+	// Top part of the fraction
 	float NDF_top = alpha * alpha;
+	// Bottom part of the fraction
 	float NDF_bottom = ((NDF_top - 1) * cos(theta_h) * cos(theta_h) + 1);
 	float D = NDF_top / nonzero(PI * NDF_bottom * NDF_bottom);
 

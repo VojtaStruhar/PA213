@@ -9,3 +9,6 @@ Project opened using CLion. Installation steps:
 -DCMAKE_TOOLCHAIN_FILE=C:\temp\PA213\framework\ext\vcpkg\scripts\buildsystems\vcpkg.cmake
 ```
 
+3. Make sure you are using `Visual Studio` as the CMake toolchain. The project expects it, MinGW doesn't work.
+
+![cmake config](./cmake-config-screenshot.png)
