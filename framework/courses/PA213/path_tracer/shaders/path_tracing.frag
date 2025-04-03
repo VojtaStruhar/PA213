@@ -214,8 +214,8 @@ vec3 Rand3() {
 vec3 LocalToWorldCoords(vec3 local, vec3 n) {
 	local = normalize(local);
 	vec3 U = abs(n.z) < 0.999 ? vec3(0, 0, 1) : vec3(0, 1, 0);
-	vec3 T = cross(U, n);
-	vec3 B = cross(n, T);
+	vec3 T = normalize(cross(U, n));
+	vec3 B = normalize(cross(n, T));
 
 	vec3 result = T * local.x + B * local.y + n * local.z;
 	return normalize(result);
