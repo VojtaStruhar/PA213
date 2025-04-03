@@ -420,13 +420,32 @@ BSDFSample SampleCombinedDiffuseSpecular(Hit hit, Ray ray){
 	//   Hints: You can call the methods you have implemented earlier directly.
 	//        
 	vec3 dir = vec3(1.0);
+	float roughness = hit.material.roughness;
+
+	float r = Rand();
+	BSDFSample s;
+	float pdf_d;
+	float pdf_s;
+
+	if (roughness > r) {
+		// diffuse
+		s = SampleCosineWeightedLambert(hit, ray);
+		pdf_d = s.pdf;
+		pdf_s = 1;
+	} else {
+		// specular
+		s = SampleSmithGGX(hit, ray);
+		pdf_d = 1;
+		pdf_s = s.pdf;
+	}
+
 
 	// TODO: 9b: The variable diffuse_sample should be set to true for diffuse samples,
 	//          and to false for specular sample.
-	bool diffuse_sample = true;
+	bool diffuse_sample = bool(roughness > r);
 
 	// TODO: 9c: Set a correct PDF value weigted based on the surface roughness (see slide #95).
-	float pdf = 1.0;
+	float pdf = s.pdf;//roughness * pdf_d + (1 - roughness) * pdf_s;
 	
 	// DO NOT MODIFY
 	return BSDFSample(dir, pdf, diffuse_sample, false);
