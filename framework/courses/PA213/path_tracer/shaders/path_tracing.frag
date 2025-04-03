@@ -357,14 +357,15 @@ float SmithGGXMaskingShadowing(Hit hit, vec3 Wi, vec3 Wr){
 	//         Avoid dividing by 0.
 	float theta_i = dot(Wi, hit.normal);
 	float theta_r = dot(Wr, hit.normal);
-	float alpha = hit.material.roughness;
+	float a = hit.material.roughness;
+	float a2 = a * a;
 
 	float top = 2 * cos(theta_i) * cos(theta_r);
-	float bottom_1 = cos(theta_r) * sqrt(alpha * alpha  + (1 - alpha * alpha) * cos(theta_i) * cos(theta_i));
-	float bottom_2 = cos(theta_i) * sqrt(alpha * alpha  + (1 - alpha * alpha) * cos(theta_r) * cos(theta_r));
-
+	float bottom_1 = theta_r * sqrt(a2  + (1 - a2) * theta_i * theta_i);
+	float bottom_2 = theta_i * sqrt(a2  + (1 - a2) * theta_r * theta_r);
 
 	return top / (bottom_1 + bottom_2);
+
 }
 
 float nonzero(float value) {
