@@ -221,6 +221,15 @@ vec3 LocalToWorldCoords(vec3 local, vec3 n) {
 	return normalize(result);
 }
 
+/// Avoid division by zero
+float nonzero(float value) {
+	float epsilon = 0.001;
+	if (abs(value) < epsilon) {
+		return value < 0 ? -epsilon : epsilon;
+	}
+	return value;
+}
+
 // ----------------------------------------------------------------------------
 // Assignment: Uniform Lambertian BRDF
 // ----------------------------------------------------------------------------
@@ -360,20 +369,14 @@ float SmithGGXMaskingShadowing(Hit hit, vec3 Wi, vec3 Wr){
 	float a = hit.material.roughness;
 	float a2 = a * a;
 
-	float top = 2 * cos(theta_i) * cos(theta_r);
+	float top = 2 * theta_i * theta_r;
 	float bottom_1 = theta_r * sqrt(a2  + (1 - a2) * theta_i * theta_i);
 	float bottom_2 = theta_i * sqrt(a2  + (1 - a2) * theta_r * theta_r);
 
-	return top / (bottom_1 + bottom_2);
+	return top / nonzero(bottom_1 + bottom_2);
 
 }
 
-float nonzero(float value) {
-//	if (abs(value) < 0.001) {
-//		return value < 0 ? -0.001 : 0.001;
-//	}
-	return value;
-}
 
 vec3 EvaluateSmithGGX_BRDF(Hit hit, BSDFSample Wi, vec3 Wr){
 	// TODO: 8: Implement Microfacet BRDF (see slide #81)
@@ -387,21 +390,21 @@ vec3 EvaluateSmithGGX_BRDF(Hit hit, BSDFSample Wi, vec3 Wr){
 	float alpha = hit.material.roughness;
 	vec3 Wh = (Wr + Wi.direction) / abs(Wr + Wi.direction);
 
-	vec3 N = hit.normal;
+	vec3 N = normalize(hit.normal);
 	float theta_i = dot(Wi.direction, N);
 	float theta_r = dot(Wr, N);
+
 	float theta_h = dot(Wh, N);
 
 	float F = FresnelSchlick(1.0, Wi.direction, Wh);
 	float G = SmithGGXMaskingShadowing(hit, Wi.direction, Wr);
 
-	// Top part of the fraction
-	float NDF_top = alpha * alpha;
-	// Bottom part of the fraction
-	float NDF_bottom = ((NDF_top - 1) * cos(theta_h) * cos(theta_h) + 1);
-	float D = NDF_top / nonzero(PI * NDF_bottom * NDF_bottom);
+	float a2 = alpha * alpha;
+	// Bottom part of the NDF
+	float NDF_bottom = ((a2 - 1) * theta_h * theta_h + 1);
+	float D = a2 / nonzero(PI * NDF_bottom * NDF_bottom);
 
-	float result_bottom = 4 * cos(theta_i) * cos(theta_r);
+	float result_bottom = 4 * theta_i * theta_r;
 
 	return hit.material.albedo.rgb * (F * G * D / nonzero(result_bottom));
 }
