@@ -316,6 +316,11 @@ BSDFSample SampleSmithGGX(Hit hit, Ray ray) {
 	//          You can compute arccos using acos() function.
 	//          The ray.direction stores the '-omega_r' vector;
 	//          Avoid dividing by 0.
+
+	// The formulas
+	// D(\omega_h) = \frac{\alpha^2}{\Phi ((\alpha^2 - 1) cos^2 \theta_h + 1)^2}
+	// \theta_h = arrcos \sqrt{\frac{1 - \xi_1}{\xi_1 (\alpha^2 - 1) + 1}}
+
 	vec3 dir = vec3(1.0);
 
 	vec2 xi = Rand2();
@@ -327,14 +332,13 @@ BSDFSample SampleSmithGGX(Hit hit, Ray ray) {
 	float x = sqrt(xi.x) * cos(2 * PI * xi.y);
 	float y = sqrt(xi.x) * sin(2 * PI * xi.y);
 	float z = sqrt(1 - xi.x);
-
 	dir = vec3(x, y, z);
 	dir = LocalToWorldCoords(dir, hit.normal);
 
 	// TODO: 5b: Set a correct PDF value for samples based on SmithGGX distribution (see slides #89 and #90).
 	float a2 = (a * a);
-	float term1 = (a2 - 1) * cos(theta) * cos(theta) + 1;
-	float pdf = (a2 * cos(theta)) / (PI * term1 * term1);
+	float term1 = (a2 - 1) * theta * theta + 1;
+	float pdf = (a2 * theta) / (PI * term1 * term1);
 
 	// DO NOT MODIFY
     return BSDFSample(dir, pdf, true, false);
