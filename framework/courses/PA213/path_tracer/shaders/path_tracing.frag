@@ -210,6 +210,32 @@ vec3 Rand3() {
 	return vec3(Rand(), Rand(), Rand());
 }
 
+float nonzero(float value) {
+	if (abs(value) < 0.001) {
+		return value < 0 ? -0.001 : 0.001;
+	}
+	return value;
+}
+
+float getAngleBetweenVectors(vec3 a, vec3 b) {
+	a = normalize(a);
+	b = normalize(b);
+	float d = clamp(dot(a, b), -1.0, 1.0);
+	return acos(d);
+}
+
+// Trowbridge-Reitz (GGX) Normal Distribution Function
+float normalDistribution(vec3 Wh, vec3 N, float alpha) {
+	const float a2 = alpha * alpha;
+	const float theta_h = getAngleBetweenVectors(Wh, N);
+	const float value = PI * pow((a2 - 1) * pow(cos(theta_h), 2) + 1, 2);
+	if (value == 0.0) {
+		return 0.0;
+	}
+	return a2 / value;
+}
+
+
 /// Slide #56
 vec3 LocalToWorldCoords(vec3 local, vec3 n) {
 	local = normalize(local);
@@ -325,20 +351,23 @@ BSDFSample SampleSmithGGX(Hit hit, Ray ray) {
 
 	vec2 xi = Rand2();
 	float a = hit.material.roughness;
-	float theta = acos(sqrt((1 - xi.x) / (xi.x * (a * a - 1) + 1)));
-	float r = sqrt(xi.y);
+	float theta = acos(sqrt((1 - xi.x) / nonzero(xi.x * ((a * a) - 1) + 1)));
 
-	// Slide #63 - same as Cosine-Weighted Sampling
-	float x = sqrt(xi.x) * cos(2 * PI * xi.y);
-	float y = sqrt(xi.x) * sin(2 * PI * xi.y);
-	float z = sqrt(1 - xi.x);
-	dir = vec3(x, y, z);
-	dir = LocalToWorldCoords(dir, hit.normal);
+	vec3 Wh = vec3(
+		sin(theta) * cos(2 * PI * xi.y),
+		sin(theta) * sin(2 * PI * xi.y),
+		cos(theta)
+	);
+	Wh = LocalToWorldCoords(Wh, hit.normal);
+
+	dir = reflect(ray.direction, Wh);
 
 	// TODO: 5b: Set a correct PDF value for samples based on SmithGGX distribution (see slides #89 and #90).
-	float a2 = (a * a);
-	float term1 = (a2 - 1) * theta * theta + 1;
-	float pdf = (a2 * theta) / (PI * term1 * term1);
+	float pdf = (
+		normalDistribution(Wh, hit.normal, a) * cos(theta))
+		/
+		nonzero(4 * dot(-ray.direction, Wh)
+	);
 
 	// DO NOT MODIFY
     return BSDFSample(dir, pdf, true, false);
@@ -370,13 +399,6 @@ float SmithGGXMaskingShadowing(Hit hit, vec3 Wi, vec3 Wr){
 	return top / (bottom_1 + bottom_2);
 }
 
-float nonzero(float value) {
-	if (abs(value) < 0.001) {
-		return value < 0 ? -0.001 : 0.001;
-	}
-	return value;
-}
-
 vec3 EvaluateSmithGGX_BRDF(Hit hit, BSDFSample Wi, vec3 Wr){
 	// TODO: 8: Implement Microfacet BRDF (see slide #81)
 	//  Hints: The 'alpha' term is stored in 'hit.material.roughness'.
@@ -386,26 +408,19 @@ vec3 EvaluateSmithGGX_BRDF(Hit hit, BSDFSample Wi, vec3 Wr){
 	//         You want to multiply the final value by the albedo which is store in 'hit.material.albedo'.
 	//         Avoid dividing by 0.
 
-	float alpha = hit.material.roughness;
-	vec3 Wh = (Wr + Wi.direction) / abs(Wr + Wi.direction);
+	float a = hit.material.roughness;
+	vec3 Wh = (Wr + Wi.direction) / nonzero(length(Wr + Wi.direction));
 
 	vec3 N = hit.normal;
-	float theta_i = dot(Wi.direction, N);
-	float theta_r = dot(Wr, N);
-	float theta_h = dot(Wh, N);
+	float theta_i = getAngleBetweenVectors(Wi.direction, N);
+	float theta_r = getAngleBetweenVectors(Wr, N);
 
 	float F = FresnelSchlick(1.0, Wi.direction, Wh);
 	float G = SmithGGXMaskingShadowing(hit, Wi.direction, Wr);
+	float D = normalDistribution(Wh, N, a);
+	float denom = 4 * cos(theta_i) * cos(theta_r);
 
-	// Top part of the fraction
-	float NDF_top = alpha * alpha;
-	// Bottom part of the fraction
-	float NDF_bottom = ((NDF_top - 1) * theta_h * theta_h + 1);
-	float D = NDF_top / nonzero(PI * NDF_bottom * NDF_bottom);
-
-	float result_bottom = 4 * theta_i * theta_r;
-
-	return hit.material.albedo.rgb * (F * G * D / nonzero(result_bottom));
+	return hit.material.albedo.rgb * (F * G * D / nonzero(denom));
 }
 
 // ----------------------------------------------------------------------------
