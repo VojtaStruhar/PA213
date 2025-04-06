@@ -435,12 +435,31 @@ BSDFSample SampleCombinedDiffuseSpecular(Hit hit, Ray ray){
 	//        
 	vec3 dir = vec3(1.0);
 
+	float r = Rand();
+	float a = hit.material.roughness;
+
+	BSDFSample diff = SampleCosineWeightedLambert(hit, ray);
+	BSDFSample spec = SampleSmithGGX(hit, ray);
+
+
 	// TODO: 9b: The variable diffuse_sample should be set to true for diffuse samples,
 	//          and to false for specular sample.
 	bool diffuse_sample = true;
 
 	// TODO: 9c: Set a correct PDF value weigted based on the surface roughness (see slide #95).
 	float pdf = 1.0;
+
+	if (a > r) {
+		dir = diff.direction;
+		diffuse_sample = true;
+		spec.pdf = 1;
+	} else {
+		dir = spec.direction;
+		diffuse_sample = false;
+		diff.pdf = 1;
+	}
+
+	pdf = a * diff.pdf + (1 - a) * spec.pdf;
 	
 	// DO NOT MODIFY
 	return BSDFSample(dir, pdf, diffuse_sample, false);
@@ -449,7 +468,8 @@ BSDFSample SampleCombinedDiffuseSpecular(Hit hit, Ray ray){
 vec3 EvaluateCombinedDiffuseSpecular(Hit hit, BSDFSample Wi, vec3 Wr){
 	// TODO: 10: Return Lambert BRDF (with albedo) for diffuse samples and Microfacet BRDF for specular samples.
 	//   Hints: You can use the Wi.diffuse variable (you have set in TASK 9b, by setting diffuse_sample).
-	return vec3(1.0);
+	if (Wi.diffuse) return EvaluateLambertWithAlbedo(hit, Wi, Wr);
+	return EvaluateSmithGGX_BRDF(hit, Wi, Wr);
 }
 
 // ----------------------------------------------------------------------------
