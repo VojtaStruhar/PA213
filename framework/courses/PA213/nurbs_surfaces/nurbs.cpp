@@ -5,6 +5,7 @@
 // All rights reserved.
 // ################################################################################
 
+#include <iostream>
 #include "nurbs.hpp"
 
 namespace nurbs
@@ -13,7 +14,7 @@ namespace nurbs
 	/// Core functions
 	//////////////////////////////////////////////////////////////////////////////////////
 
-	/// @brief Finds the know span for the parameter t in the knot vector U.
+	/// @brief Finds the knot span for the parameter t in the knot vector U.
 	/// @param t A value for the parameter of the basis functions.
 	/// @param U The knot vector.
 	/// @param p The degree of the basis functions.
@@ -24,7 +25,25 @@ namespace nurbs
 	///     - See lecture slide 20 (part 1).
 	std::uint32_t find_span(float const t, std::vector<float> const& U, std::uint32_t const p)
 	{
-		return p;
+        uint32_t low_i = p + 1;
+        uint32_t high_i = U.size() - (p + 1) - 1;
+        uint32_t mid_i = high_i + low_i / 2;
+        float mid = U[mid_i];
+
+        while (high_i - low_i > 1) {
+            if (mid <= t  && U[mid_i + 1] > t) break; // found it
+
+            if (t < mid) {
+                high_i = mid_i;
+                mid_i = (low_i + high_i) / 2; // or >> 1 ?;
+            } else {
+                low_i = mid_i;
+                mid_i = (low_i + high_i) / 2;
+            }
+            mid = U[mid_i];
+        }
+
+		return mid_i;
 	}
 
 	/// @brief Evaluates all basis functions which may be nonzero for the parameter
@@ -36,7 +55,7 @@ namespace nurbs
 	/// @param p The degree of the basis functions.
 	/// IMPLEMENTATION:
 	///     - Provide an efficient implementation of the algorithm presented in the lecture (part 1).
-	///     - Lecture slides 23 a 31 (part 1) are the most important.
+	///     - Lecture slides 23 and 31 (part 1) are the most important.
 	///     - Use N.reserve() to reserve (preallocate) required memory in the vector.
 	///     - Use N.push_back() to append an number to the end of the vector.
 	void evaluate_basis_functions(std::vector<float>& N, float const t, std::uint32_t const i, std::vector<float> const& U, std::uint32_t const p)
