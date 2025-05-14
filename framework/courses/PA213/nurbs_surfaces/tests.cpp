@@ -10,6 +10,7 @@
 #include "nurbs.hpp"
 #include <iostream>
 #include <fstream>
+#include <ios>
 
 static void compute_current_results(Tests::CurrentResults& current, Tests::TestConfig const& config)
 {
@@ -174,7 +175,7 @@ void __generate_test_case_includes(std::filesystem::path const& output_dir, Test
          << "(float)" << config.params.weight_u << ", "
          << "(float)" << config.params.weight_v << ", "
          << "(float)" << config.params.weight << ", "
-         << "(float)" << config.params.weight_invert << ", "
+         << std::boolalpha << config.params.weight_invert << ", "
          << "false },\n";
     ostr << "        SurfaceResolution{ "
          << config.resolution.points_u << ", "

@@ -1,6 +1,6 @@
 Test{
     TestConfig{
-        SurfaceGenerationParameters{ 10, 2, 10, 3, glm::vec3{ 7.5, 5, 7.5}, (float)2, (float)0, (float)2, (float)0, (float)0.5, (float)0.5, (float)10, (float)0, false },
+        SurfaceGenerationParameters{ 10, 2, 10, 3, glm::vec3{ 7.5, 5, 7.5}, (float)2, (float)0, (float)2, (float)0, (float)0.5, (float)0.5, (float)10, false, false },
         SurfaceResolution{ 5, 5, false }
     },
     ExpectedResults{
