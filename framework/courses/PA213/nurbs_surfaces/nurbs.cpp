@@ -8,6 +8,14 @@
 #include <iostream>
 #include "nurbs.hpp"
 
+#define PRINT_VECTOR(vec) \
+    std::cout << "vec{"; \
+    for (int j = 0; j < vec.size(); j++) { \
+        std::cout << N_u[j] << (j < vec.size() - 1 ? ", " : "");\
+    }\
+    std::cout << "}" std::endl;
+
+
 namespace nurbs
 {
     //////////////////////////////////////////////////////////////////////////////////////
@@ -35,11 +43,10 @@ namespace nurbs
 
             if (t < mid) {
                 high_i = mid_i;
-                mid_i = (low_i + high_i) / 2; // or >> 1 ?;
             } else {
                 low_i = mid_i;
-                mid_i = (low_i + high_i) / 2;
             }
+            mid_i = (low_i + high_i) / 2; // or >> 1 ?;
             mid = U[mid_i];
         }
 
@@ -50,7 +57,7 @@ namespace nurbs
     ///        t and stores them to the output vector N.
     /// @param N The output vector. Its elements N[0],...,N[p] will hold values of the basis functions.
     /// @param t A value for the parameter of the basis functions.
-    /// @param i The index of the knot span in U for the parameter t (it is the result from @ref find_span function).
+    /// @param i The index of the knot span in U for the parameter t (it is the result from @related find_span function).
     /// @param U The knot vector.
     /// @param p The degree of the basis functions.
     /// IMPLEMENTATION:
@@ -64,39 +71,35 @@ namespace nurbs
                                   std::vector<float> const& U,
                                   std::uint32_t const p)
     {
-        std::uint32_t result_size = p + 1U; // The length of the output array (green areas in slides)
-        N.reserve(result_size);
+        // Clear any existing values in N
+        N.clear();
+        // Reserve memory for p+1 basis functions
+        N.reserve(p + 1);
+        // Initialize a temporary vector to store the basis functions of degree 0
+        std::vector<float> left(p + 1);
+        std::vector<float> right(p + 1);
+        // The first basis function (degree 0) is always 1.0
+        N.push_back(1.0f);
+        // Calculate basis functions of higher degrees using recursion
+        for (std::uint32_t j = 1; j <= p; ++j) {
+            // Store values that will be used multiple times
+            left[j - 1] = t - U[i + 1 - j];
+            right[j - 1] = U[i + j] - t;
+            // Initialize saved value to zero
+            float saved = 0.0f;
+            // Calculate basis functions for current degree j
+            for (std::uint32_t r = 0; r < j; ++r) {
+                // Denominator for the linear combination
+                float temp = N[r] / (right[r] + left[j - 1 - r]);
+                // Calculate N_i,j
+                N[r] = saved + right[r] * temp;
 
-        if (result_size == 1) { // p == 0
-            if (U[i] <= t && t < U[i + 1]) N.push_back(1.0f);
-            else N.push_back(0.0f);
-            return;
-        }
-
-        evaluate_basis_functions(N, t, i, U, p - 1); // fill the column on the left - see slides
-
-        for (int j = 0; j < result_size; j++) {
-            const std::uint32_t real_i = i - j; // 'i' to use in calculations
-
-            const bool is_bottom = j == 0;
-            const bool is_top = j == result_size - 1;
-
-            float result = 0;
-
-            if (!is_bottom) { // gray result part
-                const float t_ip1 = U[real_i + p + 1];
-                const float coeff = divide_safe(t_ip1 - t, t_ip1 - U[real_i + 1]);
-                result += coeff * N[j - 1]; // gray arrow - go one lower
+                // Save term for next iteration
+                saved = left[j - 1 - r] * temp;
             }
 
-            if (!is_top) { // blue result part
-                const float ti = U[real_i];
-                const float coeff = divide_safe(t - ti, U[real_i + p] - ti);
-                result += coeff * N[j]; // blue arrow - go laterally
-            }
-
-            if (is_top) N.push_back(result);
-            else N[j] = result;
+            // The last basis function for this degree
+            N.push_back(saved);
         }
     }
 
@@ -116,12 +119,20 @@ namespace nurbs
                                                   std::vector<glm::vec4> const& P,
                                                   std::uint32_t const p)
     {
-        auto result = glm::vec4(0.0f);
-        for (int i = 0; i <= p; ++i) {
-            const auto index = k - p + i;
-            result += N[index] * P[index];
+        // Initialize result vector to zero
+        glm::vec4 point(0.0f, 0.0f, 0.0f, 0.0f);
+
+        // Compute point as weighted sum of control points
+        // Only basis functions N_{k-p}...N_{k} are non-zero (p+1 basis functions)
+        for (std::uint32_t j = 0; j <= p; ++j) {
+            // Compute the index into the control points array
+            std::uint32_t i = k - p + j;
+
+            // Add contribution of this control point
+            point += N[j] * P[i];
         }
-        return result;
+
+        return point;
     }
 
     /// @brief Computes the point on the surface for given values of basis functions.
@@ -150,10 +161,17 @@ namespace nurbs
                                                     std::uint32_t const p_u,
                                                     std::uint32_t const p_v)
     {
-        glm::vec4 result = glm::vec4(0.0f);
-        for (int i = 0; i < p_v; ++i) {
-            const auto index = k_v - p_v + i;
-            glm::vec4 curve_point = point_on_curve_in_homogeneous_space(k_u, N_u, P[index], p_u);
+        std::cout << "point_on_surface_in_homogeneous_space (" << k_u << ", " << k_v << ")" << std::endl;
+        // Initialize result vector to zero
+        glm::vec4 result(0.0f, 0.0f, 0.0f, 0.0f);
+        // Loop through the p_v+1 control points that have non-zero basis functions in v direction
+        for (std::uint32_t i = 0; i <= p_v; ++i) {
+            // Get index of control point row
+            std::uint32_t index_v = k_v - p_v + i;
+            // Compute point on the curve in u-direction for this row of control points
+            glm::vec4 curve_point = point_on_curve_in_homogeneous_space(k_u, N_u, P[index_v], p_u);
+
+            // Add weighted contribution to the result
             result += N_v[i] * curve_point;
         }
         return result;
@@ -190,12 +208,6 @@ namespace nurbs
         std::vector<float> N_u;
         evaluate_basis_functions(N_u, u, k_u, U, p_u);
 
-        std::cout << N_u.size() << std::endl;
-        for (int j = 0; j < N_u.size(); j++) {
-            std::cout << N_u[j] << ", ";
-        }
-        std::cout << std::endl;
-
         std::vector<float> N_v;
         evaluate_basis_functions(N_v, v, k_v, V, p_v);
 
@@ -215,7 +227,12 @@ namespace nurbs
     /// IMPLEMENTATION:
     ///     - See lecture slide 31 (part 2).
     ///     - Use function dU.assign(...) to set the result.
-    void derivative_knot_vector(std::vector<float>& dU, std::vector<float> const& U) {}
+    void derivative_knot_vector(std::vector<float>& dU, std::vector<float> const& U)
+    {
+        return;
+        if (U.size() >= 3) dU.assign(U.begin() + 1, U.end() - 1); // Drop the first and last elements
+        else dU.clear();
+    }
 
     /// @brief Given the control grid points P_{i,j}^w of a surface it computes the control grid
     ///        points Q_{i,j}^w of its partial u-derivative.
@@ -232,7 +249,47 @@ namespace nurbs
     ///     - The implementation should likely contain a nested loop (inner and outer 'for' loop) for rows and columns.
     void derivative_control_grid_u(std::vector<std::vector<glm::vec4>>& dPu,
                                    std::vector<std::vector<glm::vec4>> const& P, std::vector<float> const& U,
-                                   std::uint32_t const p) {}
+                                   std::uint32_t const p)
+    {
+        return;
+        std::cout << "derivative_control_grid_u" << std::endl;
+        // Get dimensions of the control point grid
+        std::size_t n_rows = P.size(); // Number of rows (v-direction)
+        std::size_t n_cols = 0; // Number of columns (u-direction)
+        if (n_rows > 0) {
+            n_cols = P[0].size();
+        }
+        // Resize the resulting grid to have the same number of rows as P
+        // but one less column in each row (since derivative reduces degree by 1)
+        dPu.resize(n_rows, {});
+        // For each row (v-direction)
+        for (std::size_t i = 0; i < n_rows; ++i) {
+            std::cout << i << " / " << n_rows << " rows" << std::endl;
+            // Calculate control points for the derivative curve in this row
+            // The derivative curve has n_cols-1 control points
+            for (std::size_t j = 0; j < n_cols - 1; ++j) {
+                // Calculate the derivative control point using the formula:
+                // Q_{i,j} = p * (P_{i,j+1} - P_{i,j}) / (U_{j+p+1} - U_{j+1})
+                // Get the knot vector indices for the denominator
+                std::size_t u_idx1 = j + 1;
+                std::size_t u_idx2 = j + p + 1;
+                // Compute the denominator (avoid division by zero)
+                float denominator = U[u_idx2] - U[u_idx1];
+
+                glm::vec4 derivative_point;
+                if (std::abs(denominator) < 1e-6f) {
+                    // Avoid division by zero
+                    derivative_point = glm::vec4(0.0f);
+                } else {
+                    // Apply the formula to compute the derivative control point
+                    derivative_point = static_cast<float>(p) * (P[i][j + 1] - P[i][j]) / denominator;
+                }
+
+                // Add the computed derivative control point to this row
+                dPu[i].push_back(derivative_point);
+            }
+        }
+    }
 
     /// @brief Given the control grid points P_{i,j}^w of a surface it computes the control grid
     ///        points Q_{i,j}^w of its partial v-derivative.
@@ -244,14 +301,41 @@ namespace nurbs
     /// @param q The degree of the surface in the v-direction.
     /// IMPLEMENTATION:
     ///     - See lecture slide 33 (part 2).
-    ///     - The function is quite similar to the @ref derivative_control_grid_u function, however you must compute the derivatives along the columns.
+    ///     - The function is quite similar to the @related derivative_control_grid_u function, however you must compute the derivatives along the columns.
     ///     - Use dPv.resize(..., {}) to initialize the resulting grid with right number of empty rows.
     ///     - Fore each row use dPv[i].reserve() to reserve (preallocate) required memory in the column vector.
     ///     - Use dPu.push_back() to append Q_{i,j}^w to the end of the vector.
     ///     - The implementation should likely contain a nested loop (inner and outer 'for' loop) for rows and columns
     void derivative_control_grid_v(std::vector<std::vector<glm::vec4>>& dPv,
-                                   std::vector<std::vector<glm::vec4>> const& P, std::vector<float> const& V,
-                                   std::uint32_t const q) {}
+                                   std::vector<std::vector<glm::vec4>> const& P,
+                                   std::vector<float> const& V,
+                                   std::uint32_t const q)
+    {
+        return;
+        std::size_t n_rows = P.size();
+        std::size_t n_cols = 0;
+        if (n_rows > 0) {
+            n_cols = P[0].size();
+        }
+
+        dPv.resize(n_rows, {});
+        for (std::size_t i = 0; i < n_rows; ++i) {
+            for (std::size_t j = 0; j < n_cols - 1; ++j) {
+                std::size_t u_idx1 = j + 1;
+                std::size_t u_idx2 = j + q + 1;
+
+                float denominator = V[u_idx2] - V[u_idx1];
+                glm::vec4 derivative_point;
+                if (std::abs(denominator) < 1e-6f) {
+                    derivative_point = glm::vec4(0.0f);
+                } else {
+                    derivative_point = static_cast<float>(q) * (P[i][j + 1] - P[i][j]) / denominator;
+                }
+
+                dPv[i].push_back(derivative_point);
+            }
+        }
+    }
 
     /// @brief Computes surface derivative S_\alpha(u,v) from the point A(u,v) and derivative
     ///        A_\alpha(u,v) in homogeneous coordinates.
@@ -263,7 +347,22 @@ namespace nurbs
     ///     - Tip: To get w(u,v) think about the relationship between rational curves represented in affine and homogeneous spaces (slide 14, part 2).
     glm::vec4 derivative_using_A(glm::vec4 const& A, glm::vec4 const& dA)
     {
-        return glm::vec4{0.0};
+        return glm::vec4(0.0f);
+        // Extract the w-component from point A
+        float w = A.w;
+        // Avoid division by zero
+        if (std::abs(w) < 1e-6f) {
+            return glm::vec4(0.0f);
+        }
+        // Use the quotient rule for the derivative of rational functions:
+        // S_\alpha(u,v) = (dA.xyz * w - A.xyz * dA.w) / w^2
+        // Calculate S_\alpha(u,v) using the formula from lecture slides
+        glm::vec3 numerator = glm::vec3(dA) * w - glm::vec3(A) * dA.w;
+        float denominator = w * w;
+
+        // Return the derivative in affine space with w-component set to 0
+        // (since derivatives are vectors, not points)
+        return glm::vec4(numerator / denominator, 0.0f);
     }
 
     /// @brief Computes partial u-derivative of the surface at the point corresponding
@@ -277,19 +376,34 @@ namespace nurbs
     /// @param p The degree of the surface in the u-direction.
     /// @param V The knot vector in the v-direction.
     /// @param q The degree of the surface in the v-direction.
-    /// @param dPu The control grid of the partial u-derivative; computed by @brief derivative_control_grid_u.
-    /// @param dU The knot vector of the derivative; computed by @brief derivative_knot_vector.
+    /// @param dPu The control grid of the partial u-derivative; computed by @related derivative_control_grid_u.
+    /// @param dU The knot vector of the derivative; computed by @related derivative_knot_vector.
     /// @return The partial u-derivative of the surface in the affine space.
     /// IMPLEMENTATION:
     ///     - See lecture slide 34 (part 2) and assignment slide 6.
     ///     - There is no loop in the implementation.
-    ///     - Use function @brief derivative_using_A and also @brief point_on_surface_in_homogeneous_space (twice).
-    glm::vec4 derivative_of_surface_u(float const u, float const v, std::vector<std::vector<glm::vec4>> const& P,
-                                      std::vector<float> const& U, std::uint32_t const p, std::vector<float> const& V,
+    ///     - Use function @related derivative_using_A and also @related point_on_surface_in_homogeneous_space (twice).
+    glm::vec4 derivative_of_surface_u(float const u,
+                                      float const v,
+                                      std::vector<std::vector<glm::vec4>> const& P,
+                                      std::vector<float> const& U,
+                                      std::uint32_t const p,
+                                      std::vector<float> const& V,
                                       std::uint32_t const q,
-                                      std::vector<std::vector<glm::vec4>> const& dPu, std::vector<float> const& dU)
+                                      std::vector<std::vector<glm::vec4>> const& dPu,
+                                      std::vector<float> const& dU)
     {
-        return glm::vec4{0.0};
+        return glm::vec4(0.0f);
+
+        std::cout << "derivative_of_surface_u" << std::endl;
+        // 1. Calculate the surface point A(u,v) in homogeneous space
+        glm::vec4 A = point_on_surface_in_homogeneous_space(u, v, P, U, p, V, q);
+        // 2. Calculate the derivative dA(u,v) in homogeneous space
+        // Note: The derivative curve has degree p-1 in the u-direction
+        glm::vec4 dA = point_on_surface_in_homogeneous_space(u, v, dPu, dU, p - 1, V, q);
+
+        // 3. Compute the final derivative in affine space using derivative_using_A
+        return derivative_using_A(A, dA);
     }
 
     /// @brief Computes partial u-derivative of the surface at the point corresponding
@@ -303,23 +417,34 @@ namespace nurbs
     /// @param p The degree of the surface in the u-direction.
     /// @param V The knot vector in the v-direction.
     /// @param q The degree of the surface in the v-direction.
-    /// @param dPv The control grid of the partial v-derivative; computed by @brief derivative_control_grid_v.
-    /// @param dV The knot vector of the derivative; computed by @brief derivative_knot_vector.
+    /// @param dPv The control grid of the partial v-derivative; computed by @related derivative_control_grid_v.
+    /// @param dV The knot vector of the derivative; computed by @related derivative_knot_vector.
     /// @return The partial v-derivative of the surface in the affine space.
     /// IMPLEMENTATION:
     ///     - See lecture slide 33 (part 2) and assignment slide 6.
     ///     - There is no loop in the implementation.
-    ///     - Use function @brief derivative_using_A and also @brief point_on_surface_in_homogeneous_space (twice).
-    glm::vec4 derivative_of_surface_v(float const u, float const v, std::vector<std::vector<glm::vec4>> const& P,
-                                      std::vector<float> const& U, std::uint32_t const p, std::vector<float> const& V,
+    ///     - Use function @related derivative_using_A and also @related point_on_surface_in_homogeneous_space (twice).
+    glm::vec4 derivative_of_surface_v(float const u,
+                                      float const v,
+                                      std::vector<std::vector<glm::vec4>> const& P,
+                                      std::vector<float> const& U,
+                                      std::uint32_t const p,
+                                      std::vector<float> const& V,
                                       std::uint32_t const q,
-                                      std::vector<std::vector<glm::vec4>> const& dPv, std::vector<float> const& dV)
+                                      std::vector<std::vector<glm::vec4>> const& dPv,
+                                      std::vector<float> const& dV)
     {
-        return glm::vec4{0.0};
+        return glm::vec4(0.0f);
+
+        std::cout << "derivative_of_surface_v" << std::endl;
+
+        glm::vec4 A = point_on_surface_in_homogeneous_space(u, v, P, U, p, V, q);
+        glm::vec4 dA = point_on_surface_in_homogeneous_space(u, v, dPv, dV, p, V, q - 1);
+        return derivative_using_A(A, dA);
     }
 
     //////////////////////////////////////////////////////////////////////////////////////
-    /// Utility functions (aleady implemented)
+    /// TODO: Utility functions (aleady implemented)
     //////////////////////////////////////////////////////////////////////////////////////
 
     /// @brief Transforms the passed point P from the homogeneous space to the affine space.
@@ -390,6 +515,7 @@ namespace nurbs
                                      std::vector<float> const& U, std::uint32_t p, std::vector<float> const& V,
                                      std::uint32_t q)
     {
+        std::cout << "grid_of_surface_derivatives" << std::endl;
         std::vector<std::vector<glm::vec4>> dPu, dPv;
         derivative_control_grid_u(dPu, P, U, p);
         derivative_control_grid_v(dPv, P, V, q);
@@ -404,6 +530,7 @@ namespace nurbs
         dSu.reserve(vectors_u);
         dSv.reserve(vectors_u);
         for (std::uint32_t i = 0U; i < vectors_u; ++i) {
+            std::cout << i << " / " << vectors_u << "\r" << std::flush;
             float const u{u_min + (i / (float)(vectors_u - 1U)) * (u_max - u_min)};
             dSu.push_back({});
             dSu.back().reserve(vectors_v);
@@ -415,6 +542,7 @@ namespace nurbs
                 dSv.back().push_back(derivative_of_surface_v(u, v, P, U, p, V, q, dPv, dV));
             }
         }
+        std::cout << std::endl;
     }
 
     inline float divide_safe(float a, float b)
