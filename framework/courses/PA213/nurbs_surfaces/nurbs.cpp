@@ -66,6 +66,38 @@ namespace nurbs
     {
         std::uint32_t result_size = p + 1U; // The length of the output array (green areas in slides)
         N.reserve(result_size);
+
+        if (result_size == 1) { // p == 0
+            if (U[i] <= t && t < U[i + 1]) N.push_back(1.0f);
+            else N.push_back(0.0f);
+            return;
+        }
+
+        evaluate_basis_functions(N, t, i, U, p - 1); // fill the column on the left - see slides
+
+        for (int j = 0; j < result_size; j++) {
+            std::uint32_t real_i = i - j; // 'i' to use in calculations
+
+            bool is_bottom = j == 0;
+            bool is_top = j == result_size - 1;
+
+            float result = 0;
+
+            if (!is_bottom) { // gray result part
+                float t_ip1 = U[real_i + p + 1];
+                float coeff = (t_ip1 - t) / (t_ip1 - U[real_i + 1]);
+                result += coeff * N[j - 1]; // gray arrow - go one lower
+            }
+
+            if (!is_top) { // blue result part
+                float ti = U[real_i];
+                float coeff = (t - ti) / (U[real_i + p] - ti);
+                result += coeff * N[j]; // blue arrow - go laterally
+            }
+
+            if (is_top) N.push_back(result);
+            else N[j] = result;
+        }
     }
 
     /// @brief Computes the point on the polynomial curve for given values of basis functions.
