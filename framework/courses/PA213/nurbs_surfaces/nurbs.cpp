@@ -27,7 +27,7 @@ namespace nurbs
     {
         uint32_t low_i = p + 1;
         uint32_t high_i = U.size() - (p + 1) - 1;
-        uint32_t mid_i = high_i + low_i / 2;
+        uint32_t mid_i = (high_i + low_i) / 2;
         float mid = U[mid_i];
 
         while (high_i - low_i > 1) {
@@ -50,7 +50,7 @@ namespace nurbs
     ///        t and stores them to the output vector N.
     /// @param N The output vector. Its elements N[0],...,N[p] will hold values of the basis functions.
     /// @param t A value for the parameter of the basis functions.
-    /// @param i The index of the know span in U for the parameter t (it is the result from @ref find_span function).
+    /// @param i The index of the knot span in U for the parameter t (it is the result from @ref find_span function).
     /// @param U The knot vector.
     /// @param p The degree of the basis functions.
     /// IMPLEMENTATION:
@@ -76,22 +76,22 @@ namespace nurbs
         evaluate_basis_functions(N, t, i, U, p - 1); // fill the column on the left - see slides
 
         for (int j = 0; j < result_size; j++) {
-            std::uint32_t real_i = i - j; // 'i' to use in calculations
+            const std::uint32_t real_i = i - j; // 'i' to use in calculations
 
-            bool is_bottom = j == 0;
-            bool is_top = j == result_size - 1;
+            const bool is_bottom = j == 0;
+            const bool is_top = j == result_size - 1;
 
             float result = 0;
 
             if (!is_bottom) { // gray result part
-                float t_ip1 = U[real_i + p + 1];
-                float coeff = (t_ip1 - t) / (t_ip1 - U[real_i + 1]);
+                const float t_ip1 = U[real_i + p + 1];
+                const float coeff = divide_safe(t_ip1 - t, t_ip1 - U[real_i + 1]);
                 result += coeff * N[j - 1]; // gray arrow - go one lower
             }
 
             if (!is_top) { // blue result part
-                float ti = U[real_i];
-                float coeff = (t - ti) / (U[real_i + p] - ti);
+                const float ti = U[real_i];
+                const float coeff = divide_safe(t - ti, U[real_i + p] - ti);
                 result += coeff * N[j]; // blue arrow - go laterally
             }
 
@@ -102,8 +102,8 @@ namespace nurbs
 
     /// @brief Computes the point on the polynomial curve for given values of basis functions.
     ///        The resulting point will stay in the homogeneous space.
-    /// @param k Index of a knot span; computed by the @brief find_span.
-    /// @param N A vector of evaluated basis functions; computed by the @brief evaluate_basis_functions.
+    /// @param k Index of a knot span; computed by the @related find_span.
+    /// @param N A vector of evaluated basis functions; computed by the @related evaluate_basis_functions.
     /// @param P The control points of the curve.
     /// @param p The degree of the curve.
     /// @return The point on the curve in the homogeneous space.
@@ -111,60 +111,101 @@ namespace nurbs
     ///     - See assignment slide 6.
     ///     - Avoid iterating over all values of 'i', i.e. avoid N_i,p that are zero.
     ///         - Hint: The relevant values of 'i' are defined by the knot span and degree of the curve.
-    glm::vec4 point_on_curve_in_homogeneous_space(std::uint32_t const k, std::vector<float> const& N,
-                                                  std::vector<glm::vec4> const& P, std::uint32_t const p)
+    glm::vec4 point_on_curve_in_homogeneous_space(std::uint32_t const k,
+                                                  std::vector<float> const& N,
+                                                  std::vector<glm::vec4> const& P,
+                                                  std::uint32_t const p)
     {
-        return glm::vec4{0.0};
+        auto result = glm::vec4(0.0f);
+        for (int i = 0; i <= p; ++i) {
+            const auto index = k - p + i;
+            result += N[index] * P[index];
+        }
+        return result;
     }
 
     /// @brief Computes the point on the surface for given values of basis functions.
     ///        The resulting point will stay in the homogeneous space.
-    /// @param k Index of a knot span in the u-direction; computed by the @brief find_span.
-    /// @param N A vector of evaluated basis functions in the u-direction; computed by the @brief evaluate_basis_functions.
-    /// @param l Index of a knot span in the v-direction; computed by the @brief find_span.
-    /// @param M A vector of evaluated basis functions in the v-direction; computed by the @brief evaluate_basis_functions.
+    /// @param k_u Index of a knot span in the u-direction; computed by the @ref find_span .
+    /// @param N_u A vector of evaluated basis functions in the u-direction; computed by the @ref evaluate_basis_functions.
+    /// @param k_v Index of a knot span in the v-direction; computed by the @ref find_span.
+    /// @param N_v A vector of evaluated basis functions in the v-direction; computed by the @ref evaluate_basis_functions.
     /// @param P The grid of control points of the surface.
     ///          The i-the row (v-direction) consists of control points P[i][0],...,P[i][P[i].size()-1].
     ///          The j-the column (u-direction) consists of control points P[0][j],...,P[P.size()-1][j].
-    /// @param p The degree of the surface in the u-direction.
-    /// @param q The degree of the surface in the v-direction.
+    /// @param p_u The degree of the surface in the u-direction.
+    /// @param p_v The degree of the surface in the v-direction.
     /// @return The point on the surface in the homogeneous space.
     /// IMPLEMENTATION:
     ///     - See lecture slide 20 (part 2) and also assignment slide 6.
     ///     - There should be a single loop in the function's body.
-    ///     - Inside the loop you can use the @brief point_on_curve_in_homogeneous_space function.
+    ///     - Inside the loop you can use the @related point_on_curve_in_homogeneous_space function.
     ///     - Avoid iterating over all values of 'i', i.e. avoid N_{i,p} that are zero.
     ///         - Hint: The relevant values of 'i' are defined by the knot span and degree of the curve.
-    glm::vec4 point_on_surface_in_homogeneous_space(std::uint32_t const k, std::vector<float> const& N,
-                                                    std::uint32_t const l, std::vector<float> const& M,
-                                                    std::vector<std::vector<glm::vec4>> const& P, std::uint32_t const p,
-                                                    std::uint32_t const q)
+    glm::vec4 point_on_surface_in_homogeneous_space(std::uint32_t const k_u,
+                                                    std::vector<float> const& N_u,
+                                                    std::uint32_t const k_v,
+                                                    std::vector<float> const& N_v,
+                                                    std::vector<std::vector<glm::vec4>> const& P,
+                                                    std::uint32_t const p_u,
+                                                    std::uint32_t const p_v)
     {
-        return glm::vec4{0.0};
+        glm::vec4 result = glm::vec4(0.0f);
+        for (int i = 0; i < p_v; ++i) {
+            const auto index = k_v - p_v + i;
+            glm::vec4 curve_point = point_on_curve_in_homogeneous_space(k_u, N_u, P[index], p_u);
+            result += N_v[i] * curve_point;
+        }
+        return result;
     }
 
-    /// @brief Computes the point on the surface for given values of parameters u,v.
-    ///        The resulting point will stay in the homogeneous space.
+    /// Computes the point on the surface for given values of parameters u,v.
+    /// The resulting point will stay in the homogeneous space.
+    /// /// IMPLEMENTATION:
+    ///     - Compute both knot spans and all possibly non-zero basis functions.
+    ///          - Use @related find_span and @related evaluate_basis_functions.
+    ///     - Then use the function @related point_on_surface_in_homogeneous_space above.
+    ///     - See lecture slide 20 (part 2).
     /// @param u The parameter of the surface.
     /// @param v The parameter of the surface.
     /// @param P The grid of control points of the surface.
-    ///          The i-the row (v-direction) consists of control points P[i][0],...,P[i][P[i].size()-1].
-    ///          The j-the column (u-direction) consists of control points P[0][j],...,P[P.size()-1][j].
+    ///          The i-th row (v-direction) consists of control points P[i][0],...,P[i][P[i].size()-1].
+    ///          The j-th column (u-direction) consists of control points P[0][j],...,P[P.size()-1][j].
     /// @param U The knot vector in the u-direction.
-    /// @param p The degree of the surface in the u-direction.
+    /// @param p_u The degree of the surface in the u-direction.
     /// @param V The knot vector in the u-direction.
-    /// @param q The degree of the surface in the v-direction.
+    /// @param p_v The degree of the surface in the v-direction.
     /// @return The point on the surface in the homogeneous space.
-    /// IMPLEMENTATION:
-    ///     - Compute both knot spans and all possibly non-zero basis functions.
-    ///          - Use @brief find_span and @brief evaluate_basis_functions.
-    ///     - Then use the function @brief point_on_surface_in_homogeneous_space above.
-    ///     - See lecture slide 20 (part 2).
-    glm::vec4 point_on_surface_in_homogeneous_space(float u, float v, std::vector<std::vector<glm::vec4>> const& P,
-                                                    std::vector<float> const& U, std::uint32_t p,
-                                                    std::vector<float> const& V, std::uint32_t q)
+    glm::vec4 point_on_surface_in_homogeneous_space(float u,
+                                                    float v,
+                                                    std::vector<std::vector<glm::vec4>> const& P,
+                                                    std::vector<float> const& U,
+                                                    std::uint32_t p_u,
+                                                    std::vector<float> const& V,
+                                                    std::uint32_t p_v)
     {
-        return glm::vec4{0.0};
+        auto k_u = find_span(u, U, p_u);
+        auto k_v = find_span(v, V, p_v);
+
+        std::vector<float> N_u;
+        evaluate_basis_functions(N_u, u, k_u, U, p_u);
+
+        std::cout << N_u.size() << std::endl;
+        for (int j = 0; j < N_u.size(); j++) {
+            std::cout << N_u[j] << ", ";
+        }
+        std::cout << std::endl;
+
+        std::vector<float> N_v;
+        evaluate_basis_functions(N_v, v, k_v, V, p_v);
+
+        return point_on_surface_in_homogeneous_space(k_u,
+                                                     N_u,
+                                                     k_v,
+                                                     N_v,
+                                                     P,
+                                                     p_u,
+                                                     p_v);
     }
 
     /// @brief Given the knot vector U it computes the know vector U' used for
@@ -374,5 +415,11 @@ namespace nurbs
                 dSv.back().push_back(derivative_of_surface_v(u, v, P, U, p, V, q, dPv, dV));
             }
         }
+    }
+
+    inline float divide_safe(float a, float b)
+    {
+        if (b == 0.0f) return 0.f;
+        return a / b;
     }
 }
