@@ -148,7 +148,7 @@ namespace nurbs
     {
         glm::vec4 result(0.0f, 0.0f, 0.0f, 0.0f);
 
-        for (std::uint32_t i = 0; i <= p_v; ++i) {
+        for (std::uint32_t i = 0; i <= p_u; ++i) {
             // same as previous
             std::uint32_t point_index = k_u - p_u + i;
             glm::vec4 curve_point = point_on_curve_in_homogeneous_space(k_v, N_v, P[point_index], p_v);
