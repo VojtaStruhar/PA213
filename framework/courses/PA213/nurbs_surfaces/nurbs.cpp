@@ -109,7 +109,7 @@ namespace nurbs
         glm::vec4 point(0.0f, 0.0f, 0.0f, 0.0f);
 
         for (std::uint32_t i = 0; i <= p; ++i) {
-            std::uint32_t point_index = k - p + i;
+            const std::uint32_t point_index = k - p + i;
 
             point += N[i] * P[point_index];
         }
@@ -147,7 +147,7 @@ namespace nurbs
 
         for (std::uint32_t i = 0; i <= p_u; ++i) {
             // same as previous
-            std::uint32_t point_index = k_u - p_u + i;
+            const std::uint32_t point_index = k_u - p_u + i;
             glm::vec4 curve_point = point_on_curve_in_homogeneous_space(k_v, N_v, P[point_index], p_v);
 
             result += N_u[i] * curve_point;
@@ -180,8 +180,8 @@ namespace nurbs
                                                     std::vector<float> const& V,
                                                     std::uint32_t p_v)
     {
-        auto k_u = find_span(u, U, p_u);
-        auto k_v = find_span(v, V, p_v);
+        const std::uint32_t k_u = find_span(u, U, p_u);
+        const std::uint32_t k_v = find_span(v, V, p_v);
 
         std::vector<float> N_u;
         evaluate_basis_functions(N_u, u, k_u, U, p_u);
@@ -266,8 +266,8 @@ namespace nurbs
                                    std::vector<float> const& V,
                                    std::uint32_t const q)
     {
-        std::size_t n_rows = P.size();
-        std::size_t n_cols = P[0].size();
+        const std::size_t n_rows = P.size();
+        const std::size_t n_cols = P[0].size();
 
         dPv.resize(n_rows);
 
