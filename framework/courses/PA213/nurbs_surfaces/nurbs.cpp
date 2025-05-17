@@ -224,7 +224,8 @@ namespace nurbs
     ///     - Use dPu.push_back() to append Q_{i,j}^w to the end of the vector.
     ///     - The implementation should likely contain a nested loop (inner and outer 'for' loop) for rows and columns.
     void derivative_control_grid_u(std::vector<std::vector<glm::vec4>>& dPu,
-                                   std::vector<std::vector<glm::vec4>> const& P, std::vector<float> const& U,
+                                   std::vector<std::vector<glm::vec4>> const& P,
+                                   std::vector<float> const& U,
                                    std::uint32_t const p)
     {
         std::size_t n_rows = P.size();
@@ -232,21 +233,15 @@ namespace nurbs
 
         dPu.resize(n_rows);
 
-        // TODO: <= ???, also rename to Y
-        for (std::size_t i = 0; i < n_rows - 1; ++i) {
-            // TODO: <= ???, also rename to X
-            for (std::size_t j = 0; j < n_cols; ++j) {
-                std::size_t u_idx1 = j + 1;
-                std::size_t u_idx2 = j + p + 1;
+        for (std::uint32_t i = 0; i < n_rows - 1; ++i) {
+            dPu[i].reserve(n_cols);
 
+            for (std::uint32_t j = 0; j < n_cols; ++j) {
                 glm::vec4 d_point = static_cast<float>(p) * (P[i + 1][j] - P[i][j]);
-                float denom = U[u_idx2] - U[u_idx1];
 
-                if (std::abs(denom) < 1e-6f) denom = 1e-6f;
+                float denom = U[i + p + 1] - U[i + 1];
 
-                d_point /= denom;
-
-                dPu[i].push_back(d_point);
+                dPu[i].push_back(d_point / denom);
             }
         }
     }
@@ -276,21 +271,15 @@ namespace nurbs
 
         dPv.resize(n_rows);
 
-        // TODO: <= ???, also rename to Y
-        for (std::size_t i = 0; i < n_rows; ++i) {
-            // TODO: <= ???, also rename to X
-            for (std::size_t j = 0; j < n_cols - 1; ++j) {
-                std::size_t u_idx1 = j + 1;
-                std::size_t u_idx2 = j + q + 1;
+        for (std::uint32_t i = 0; i < n_rows; ++i) {
+            dPv[i].reserve(n_cols);
 
+            for (std::uint32_t j = 0; j < n_cols - 1; ++j) {
                 glm::vec4 d_point = static_cast<float>(q) * (P[i][j + 1] - P[i][j]);
-                float denom = V[u_idx2] - V[u_idx1];
 
-                if (std::abs(denom) < 1e-6f) denom = 1e-6f;
+                float denom = V[j + q + 1] - V[j + 1];
 
-                d_point /= denom;
-
-                dPv[i].push_back(d_point);
+                dPv[i].push_back(d_point / denom);
             }
         }
     }
