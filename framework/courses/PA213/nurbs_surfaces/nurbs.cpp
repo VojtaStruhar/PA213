@@ -16,8 +16,6 @@
     std::cout << "}" std::endl;
 
 
-#define PRINT(stuff) std::cout << "[DEBUG] " << stuff << std::endl;
-
 namespace nurbs
 {
     //////////////////////////////////////////////////////////////////////////////////////
@@ -39,7 +37,6 @@ namespace nurbs
         uint32_t high_i = U.size() - p - 1;
 
         if (t == U[high_i]) {
-            PRINT(high_i - 1)
             return high_i - 1; // return the lower index of the two
         }
 
@@ -308,9 +305,8 @@ namespace nurbs
     ///     - Tip: To get w(u,v) think about the relationship between rational curves represented in affine and homogeneous spaces (slide 14, part 2).
     glm::vec4 derivative_using_A(glm::vec4 const& A, glm::vec4 const& dA)
     {
-        float w_uv = A.w;
-        float dw_uv = dA.w;
-
+        const float w_uv = A.w;
+        const float dw_uv = dA.w;
 
         return (1.0f / w_uv) * dA - (dw_uv / (w_uv * w_uv)) * A;
     }
